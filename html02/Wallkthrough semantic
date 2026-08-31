@@ -1,0 +1,44 @@
+<DOCTYPE! html>
+ <html lang="en">
+ <head>
+     <meta charset="UTF-8">
+    <meta name="veiwport" content="width=device-width, initial-scale1.0">
+    <title></title>
+</head>
+
+<body>
+    <header>Carsons best reicpies</header>
+    <p>the best cooking recipies</p>
+    <nav>
+      <a href="#">about me</a> &nbsp;
+      <a href="#">Contact</a>
+      <a href="#">More recipies</a>
+      
+
+
+    </nav>
+    <main>
+            <section>
+                    <h2>Recipie: Best Brownies</h2>
+                    <p>Soft, chewy brownies with choc chips</p>
+                    <h3>Ingredients</h3>
+                    <ul>
+                        <li>2 cupflour</li>
+                        <li>2eggs</li>
+                        <li>1 cup sugar</li>
+                        <li>1/2 tsp baking powder</li>
+                        <li>2 tbsp coca</li>
+                    </ul>
+                    <h3>Instructions</h3>
+                    <ol>
+                        <li>Preheat oven to 350&deg;F</li>
+                        <li>Mix all Ingredients</li>
+                        <li>Put in oven</li>
+                    </ol>
+            </section>
+    </main>
+
+</body>
+
+
+    </html>
