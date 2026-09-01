@@ -3,7 +3,7 @@
  <head>
      <meta charset="UTF-8">
     <meta name="veiwport" content="width=device-width, initial-scale1.0">
-    <title></title>
+    <title>Carsons Brownie</title>
 </head>
 
 <body>
@@ -21,6 +21,15 @@
             <section>
                     <h2>Recipie: Best Brownies</h2>
                     <p>Soft, chewy brownies with choc chips</p>
+                    <p>
+                        <strong>Prep time:</strong> 15 minutes |<br>
+                        <strong>Bake time:</strong> 25 minutes |<br>
+                        <strong>Makes:</strong> 8 broniws |
+                    </p>
+
+                    <p>
+                        These brownies are the<em>best in the city</em>
+                    </p>
                     <h3>Ingredients</h3>
                     <ul>
                         <li>2 cupflour</li>
@@ -29,14 +38,35 @@
                         <li>1/2 tsp baking powder</li>
                         <li>2 tbsp coca</li>
                     </ul>
-                    <h3>Instructions</h3>
+                    <h3>Instructions</h3> 
                     <ol>
                         <li>Preheat oven to 350&deg;F</li>
                         <li>Mix all Ingredients</li>
                         <li>Put in oven</li>
                     </ol>
+                    <h3>Nutrition info</h3>
+                    <dl>
+                        <dt>Calories</dt>
+                        <dd>250</dd>
+                        <dt>Protien</dt>
+                        <dd>2g</dd>
+                        <dt>Fat</dt>
+                        <dd>6g</dd>
+                    </dl>
+                    
             </section>
+           <aslide>
+                <h3>Related Recipies</h3>
+                <ul>
+                    <li>Lemon bars</li>
+                    <li>Truffle icecream</li>
+                    <li>Sugar cookies</li>
+                </ul>
+         </aslide>
     </main>
+    <footer>
+        <p>&copy; 2026 Carson's Brownies. All Rights Reserved
+    </footer>
 
 </body>
 

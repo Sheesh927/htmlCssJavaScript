@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+    <html lang="en">
+     <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Best party planner manual</title>
+     </head>
+     <body>
+
+         <header>
+            <h1>Ultimate Party planned guide</h1>
+            <p>Get suplies, then set up the party. Have fun, then clean up and sleep.</p>    
+        </header>
+
+        <main>
+          
+            <section>
+                <h2>Planning the party</h2>
+                <ol>
+                    <li>Choose a date for the party to happen</li>
+                    <li>Create the invitations and start sending them out via email or mailing it</li>
+                    <li>Plan menu and get the ingredients to make the food</li>
+                    <li>Decorate closer to the party and set up being ready</li>
+                    <li>Have Fun</li>
+
+                </ol>
+
+                <h2>Guest essentials</h2>
+                <ul>
+                    <li>Comfortable seating</li>
+                    <li>Good quality lighting</li>
+                    <li>Beverage or drink station</li>
+                    <li>Music or jukebox</li>
+                    <li>clean ready restrooms</li>
+                </ul>
+                <!--Gerneralized prepping-->
+                <h2>Food preperation</h2>
+                <ol>
+                    <li>Prepare appetizers</li>
+                    <li>Cook the main dish</li>
+                    <li>Prepare deserts</li>
+                    <li>Get drink station set up</li>
+                </ol>
+
+                <h2>Getting suplies for the Party</h2>
+                <ul>
+                    <li>Cups</li>
+                    <li>Paper plates</li>
+                    <li>Chairs</li>
+                    <li>tables</li>
+                    <li>Cards</li>
+
+                </ol>
+            </section>
+
+
+</main>    
+<footer>
+    <p>&copy; 2026 party planning guide made by Carson</p>
+</footer>  
+</body>
+     </html>  
