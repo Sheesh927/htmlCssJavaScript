@@ -2,9 +2,55 @@
     <html lang="en">
         <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <title>Carson's Brew's</title>
 
-
-
-
-</head>
+    </head>
     </html>
+<header>
+<h1>Brew Coffee Shop</h1>
+<p>Specialty Expresso Drinks</p>
+</header>
+<nav>
+<a href="#">Hours</a>
+<a href="#">Menu</a>
+<a href="#">Hours</a>
+<a href="#">Cntact</a>
+</nav>
+<main>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
+</main>
