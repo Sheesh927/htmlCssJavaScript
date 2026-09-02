@@ -7,6 +7,7 @@
 
     </head>
     </html>
+
 <header>
 <h1>Brew Coffee Shop</h1>
 <p>Specialty Expresso Drinks</p>
@@ -17,34 +18,22 @@
 <a href="#">Hours</a>
 <a href="#">Cntact</a>
 </nav>
+
 <main>
+    <section>
+        
+<h2>Classic Espresspo</h2>
+<p>Try our signature espresso base coffee with a hint of cinnamon</p>
+        <article>
+<h3>Cappuccino</h3>
+<p>Espresso topped with our steamed milk of and touch of foam</p>
 
 
 
 
+        </article>
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+    </section>
 
 
 
