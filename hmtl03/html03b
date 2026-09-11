@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sports & Recreation Hub</title>
+</head>
+<section id="welcome"> </section>
+  <header id="top">
+  <main>
+    <nav>
+      <a href="Home">Home</a>
+      <a href="Sports">Sports</a>
+      <a href="Classes">Classes</a>
+      <a href="Contact">Contact</a>
+    </nav>
+
+
+<main>
+  
+ <h2>Welcome to Sports and Recreation</h2>
+<p>Hello and welcome to the site. Today this site will talk and explain things about Sports and Recreation</p>
+  
+<section id="featured"><h2> Featured sports</h2>
+   <h2>Basketball<br>Tennis<br>Rugby<br>Rock Climbing<br>Football</h2>
+</section>
+
+<section id="events"><h2>Upcoming Events</h2>
+  <p>At 3pm Saturday we have an open event to come and try out all of our offered sports and see which one you like best we have this once a week on Saturdays usually but can be altered sometimes go to our website to make sure tokeep up with the times and dates</p>
+
+</section>
+ <aside>
+    <h3>Related Links</h3>
+    <ul>
+      <li><a href="#featured">Featured Sports</a></li>
+      <li><a href="#events">Upcoming events</a></li>
+      <li><a href="#welcome">Home</a></li>
+    </ul>
+  </aside>
+
+ 
+  <nav>
+      <a href="Home">Home</a>
+      <a href="Sports">Sports</a>
+      <a href="Classes">Classes</a>
+      <a href="Contact">Contact</a>
+      <a href="tel:+1-555-0100">Call us</a>
+      <a href="mc_creynolds28@mcjvs2.org">Email</a>
+    </nav>
+    <footer>
+  
+ </footer> 
+  </main>

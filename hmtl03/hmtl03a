@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- TODO: Add a title tag for this page. Try: "Local Businesses Directory" -->
+  <title></title>
+</head>
+<body>
+<sextion id="top"></sextion>
+  <header> <h1>Local Businesses Directory</h1>
+  <nav>
+    <a href="#Home"> Home</a>
+    <a href="#Featured"> Featured </a>
+    <a href="#Services"> Services </a>
+    <a href="#Events">Events </a>
+   </nav> 
+  </header>
+
+<main>
+
+<section id="Featured">
+    <h2>Featured Businesses</h2>
+    <p>Locally owned businesses are the economic foundation and cultural heartbeat of a community. By keeping revenue circulating within the neighborhood rather than sending profits to distant corporate headquarters, these independent shops, cafes, and services generate sustainable local jobs, fund essential public infrastructure, and support nearby charities. Beyond their tangible financial impact, local businesses cultivate a unique sense of place by tailoring their offerings to the specific tastes of their neighbors and building genuine, personal relationships with every customer who walks through the door.</p>
+  
+
+</section>
+    <section id="Services">
+      <h2>Services Directory</h2>
+      <p>Core Business Services provide foundational administrative, legal, and HR management; Digital & Technical Services power IT infrastructure, software, and cybersecurity; Creative & Brand Services establish visual identity and storytelling; Marketing & Customer Growth Services drive audience acquisition and engagement; and Professional Advisory Services deliver expert consulting for complex strategy, risk, and transformation.</p>
+    <!-- Add paragraphs describing different service categories -->
+    <!-- Try: Restaurants, Retail Shops, Professional Services -->
+</section>
+<section id="Events">
+  <h2>Community Events</h2>
+  <p>Some local events coming up are homecoming in the area and then rugby practices have been going on also. There is going to be a memorial soon im sure because of 9/11 coming up.</p>
+    <!-- TODO: Add a SECTION element with id="events" -->
+    <!-- Include an h2 "Community Events" -->
+    <!-- Describe upcoming events in your local area -->
+</section>
+<aside id="Jump Navigation"></aside>
+    <!-- TODO: Create a "Jump Navigation" ASIDE element -->
+    <!-- Add a list of anchor links that users can use to navigate this page -->
+    <!-- Link to #featured, #services, #events, and #top -->
+
+
+</main>
+
+
+  <footer>@copyright all rights reservd Carson Reynolds</footer>
+  
+ <nav>
+    <a href="#Home"> Home</a>
+    <a href="#Featured"> Featured </a>
+    <a href="#Services"> Services </a>
+    <a href="#Events">Events </a>
+   </nav>
+  <!-- Add an anchor link back to the top: <a href="#top">Back to Top</a> -->
+<a href="#top"> back to top</a>
+
+</body>
+</html>
