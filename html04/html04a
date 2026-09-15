@@ -1,21 +1,18 @@
 <!DOCTYPE html>
-<!-- IMAGES: this file uses pictures from the images/ folder.
-     Get them from GitHub (html04_imagesMediaTables/images) and put them in a
-     folder named images next to this file, or the pictures won't show. -->
+
 <html lang="en">
 <head>
-  <!-- Character encoding and viewport meta tag for responsive design -->
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Image Gallery Task</title>
+  <title>Carsons Gallery</title>
 </head>
 <body>
 
-  <h1>Image Gallery Task</h1>
-  <p>Practice adding images with alt text, captions, and sizing.</p>
+  <h1></h1>
+  <p></p>
 
-  <!-- ===== TODO 1: Add an image with alt text ===== -->
-  <!-- Task: Add an <img> tag with:
+  <img src="images/nature-scene-1.jpg"
+  alt="Picture of mountains and a big overview lake"
        - src="images/nature-scene-1.jpg"
        - alt="A scenic mountain landscape with clear blue sky"
        - width="300"
