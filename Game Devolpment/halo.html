@@ -1,0 +1,890 @@
+Here is the updated HTML code featuring full-automatic firing and a 3-card Rogue-lite Selection Menu whenever you clear a wave!
+
+Save the code below as a .html file and open it in your browser:
+
+HTML
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Halo Spartan Wave Survival</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            user-select: none;
+        }
+        body {
+            background-color: #0b0e14;
+            color: #00ffcc;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            overflow: hidden;
+        }
+        #game-container {
+            position: relative;
+            box-shadow: 0 0 25px rgba(0, 255, 204, 0.25);
+            border: 2px solid #00ffcc;
+        }
+        canvas {
+            background-color: #121820;
+            display: block;
+        }
+        #hud {
+            position: absolute;
+            top: 15px;
+            left: 15px;
+            right: 15px;
+            display: flex;
+            justify-content: space-between;
+            pointer-events: none;
+            font-weight: bold;
+            text-shadow: 0 0 5px #000;
+        }
+        .hud-panel {
+            background: rgba(0, 20, 30, 0.8);
+            padding: 8px 15px;
+            border-radius: 5px;
+            border: 1px solid #00ffcc;
+        }
+        #shield-bar-container, #boss-hp-container {
+            height: 12px;
+            background: #222;
+            border: 1px solid #00ffcc;
+            margin-top: 5px;
+            overflow: hidden;
+        }
+        #shield-bar-container { width: 160px; }
+        #shield-bar {
+            width: 100%;
+            height: 100%;
+            background: #00ccff;
+            transition: width 0.1s linear;
+        }
+        #boss-hp-bar {
+            width: 100%;
+            height: 100%;
+            background: #ff0055;
+            transition: width 0.1s linear;
+        }
+        #boss-hud {
+            position: absolute;
+            top: 70px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 400px;
+            text-align: center;
+            display: none;
+            pointer-events: none;
+        }
+        #wave-banner {
+            position: absolute;
+            top: 40%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 3rem;
+            color: #00ffcc;
+            text-shadow: 0 0 15px #00ffcc;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.5s ease;
+        }
+        .screen-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(5, 10, 15, 0.92);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 10;
+        }
+        .title {
+            font-size: 2.3rem;
+            margin-bottom: 10px;
+            color: #ff3333;
+            text-shadow: 0 0 10px #ff3333;
+        }
+        .currency-display {
+            font-size: 1.1rem;
+            color: #a64dff;
+            margin: 10px 0;
+            text-shadow: 0 0 8px #a64dff;
+        }
+        .upgrade-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin: 10px 0;
+            width: 80%;
+            max-width: 550px;
+        }
+        .upgrade-card {
+            background: rgba(0, 30, 45, 0.8);
+            border: 1px solid #00ffcc;
+            padding: 10px;
+            border-radius: 6px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+        /* Card Selection UI */
+        .cards-container {
+            display: flex;
+            gap: 20px;
+            margin-top: 20px;
+        }
+        .card {
+            background: rgba(0, 20, 35, 0.9);
+            border: 2px solid #00ffcc;
+            box-shadow: 0 0 15px rgba(0, 255, 204, 0.2);
+            border-radius: 8px;
+            width: 170px;
+            height: 220px;
+            padding: 15px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: space-between;
+            text-align: center;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 0 20px #00ffcc;
+            background: rgba(0, 40, 60, 0.95);
+        }
+        .card-icon {
+            font-size: 2.2rem;
+            margin-top: 5px;
+        }
+        .card-title {
+            font-size: 1.05rem;
+            font-weight: bold;
+            color: #fff;
+        }
+        .card-desc {
+            font-size: 0.8rem;
+            color: #aaa;
+        }
+        button {
+            padding: 8px 16px;
+            background: #00ffcc;
+            color: #000;
+            border: none;
+            font-size: 0.95rem;
+            font-weight: bold;
+            cursor: pointer;
+            border-radius: 4px;
+            margin-top: 8px;
+            transition: background 0.2s;
+        }
+        button:hover { background: #00cca3; }
+        button:disabled {
+            background: #444;
+            color: #888;
+            cursor: not-allowed;
+        }
+        .btn-deploy {
+            padding: 12px 30px;
+            font-size: 1.2rem;
+            background: #00ffcc;
+            box-shadow: 0 0 10px #00ffcc;
+        }
+        #controls-hint {
+            margin-top: 10px;
+            color: #788d9e;
+            font-size: 0.85rem;
+        }
+    </style>
+</head>
+<body>
+
+    <h1 style="margin-bottom: 8px; letter-spacing: 2px;">HALO: SPARTAN SURVIVAL</h1>
+
+    <div id="game-container">
+        <canvas id="gameCanvas" width="900" height="650"></canvas>
+        
+        <!-- HUD -->
+        <div id="hud">
+            <div class="hud-panel">
+                <div>SPARTAN SHIELD</div>
+                <div id="shield-bar-container"><div id="shield-bar"></div></div>
+            </div>
+            <div class="hud-panel" style="text-align: center;">
+                <div>WAVE <span id="wave-num">1</span></div>
+                <div style="font-size: 0.8rem; color: #a64dff;">SHARDS: <span id="in-game-shards">0</span></div>
+            </div>
+            <div class="hud-panel" style="text-align: right;">
+                <div>AMMO: <span id="ammo">32</span> / ∞</div>
+                <div>GRENADES: <span id="grenades">4</span> (R-Click)</div>
+            </div>
+        </div>
+
+        <!-- Boss HUD -->
+        <div id="boss-hud">
+            <div style="font-size: 0.9rem; font-weight: bold; color: #ff0055; text-shadow: 0 0 5px #000;">BRUTE CHIEFTAIN</div>
+            <div id="boss-hp-container"><div id="boss-hp-bar"></div></div>
+        </div>
+
+        <div id="wave-banner">WAVE 1</div>
+
+        <!-- Wave Complete Card Choice Menu -->
+        <div id="card-selection" class="screen-overlay" style="display: none;">
+            <h2 style="color: #00ffcc; font-size: 2rem; text-shadow: 0 0 10px #00ffcc;">WAVE CLEARED</h2>
+            <p style="color: #ccc; margin-top: 5px;">Choose an Tactical In-Game Augment:</p>
+            <div class="cards-container" id="cards-box"></div>
+        </div>
+
+        <!-- Game Over & Upgrade Menu -->
+        <div id="game-over" class="screen-overlay">
+            <div class="title" id="screen-title">MISSION FAILED</div>
+            <p id="game-summary" style="color: #fff; font-size: 1.1rem;">You reached Wave <span id="final-wave">1</span></p>
+            
+            <div class="currency-display">
+                💎 Crystal Shards: <span id="shards-count">0</span>
+                <span id="earned-shards-text" style="font-size: 0.9rem; color: #00ffcc; display: block;"></span>
+            </div>
+
+            <div class="upgrade-grid">
+                <div class="upgrade-card">
+                    <div>
+                        <strong>Max Shield</strong>
+                        <div style="font-size: 0.8rem; color: #aaa;">Lvl: <span id="lvl-shield">1</span> (+20 HP)</div>
+                    </div>
+                    <button id="btn-up-shield" onclick="buyUpgrade('shield')">Upgrade (<span id="cost-shield">10</span> 💎)</button>
+                </div>
+                <div class="upgrade-card">
+                    <div>
+                        <strong>Shield Recharge Rate</strong>
+                        <div style="font-size: 0.8rem; color: #aaa;">Lvl: <span id="lvl-regen">1</span> (-0.3s Delay)</div>
+                    </div>
+                    <button id="btn-up-regen" onclick="buyUpgrade('regen')">Upgrade (<span id="cost-regen">15</span> 💎)</button>
+                </div>
+                <div class="upgrade-card">
+                    <div>
+                        <strong>Bullet Damage</strong>
+                        <div style="font-size: 0.8rem; color: #aaa;">Lvl: <span id="lvl-damage">1</span> (+5 Dmg)</div>
+                    </div>
+                    <button id="btn-up-damage" onclick="buyUpgrade('damage')">Upgrade (<span id="cost-damage">12</span> 💎)</button>
+                </div>
+                <div class="upgrade-card">
+                    <div>
+                        <strong>AR Magazine Size</strong>
+                        <div style="font-size: 0.8rem; color: #aaa;">Lvl: <span id="lvl-ammo">1</span> (+8 Ammo)</div>
+                    </div>
+                    <button id="btn-up-ammo" onclick="buyUpgrade('ammo')">Upgrade (<span id="cost-ammo">8</span> 💎)</button>
+                </div>
+            </div>
+
+            <button class="btn-deploy" onclick="startNewGame()">DEPLOY SPARTAN</button>
+        </div>
+    </div>
+
+    <div id="controls-hint">
+        WASD: Move | Mouse: Aim | Hold Left Click: Auto Fire | Right Click: Plasma Grenade | R: Reload
+    </div>
+
+    <script>
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+
+        // Elements
+        const shieldBar = document.getElementById('shield-bar');
+        const ammoEl = document.getElementById('ammo');
+        const grenadesEl = document.getElementById('grenades');
+        const waveEl = document.getElementById('wave-num');
+        const inGameShardsEl = document.getElementById('in-game-shards');
+        const bossHud = document.getElementById('boss-hud');
+        const bossHpBar = document.getElementById('boss-hp-bar');
+        const waveBanner = document.getElementById('wave-banner');
+        
+        const cardSelectionScreen = document.getElementById('card-selection');
+        const cardsBox = document.getElementById('cards-box');
+
+        const gameOverScreen = document.getElementById('game-over');
+        const screenTitle = document.getElementById('screen-title');
+        const finalWaveEl = document.getElementById('final-wave');
+        const shardsCountEl = document.getElementById('shards-count');
+        const earnedShardsText = document.getElementById('earned-shards-text');
+
+        // Saved Upgrades State
+        let stats = JSON.parse(localStorage.getItem('halo_spartan_saves')) || {
+            shards: 0,
+            shieldLvl: 1,
+            regenLvl: 1,
+            damageLvl: 1,
+            ammoLvl: 1
+        };
+
+        function saveProgress() {
+            localStorage.setItem('halo_spartan_saves', JSON.stringify(stats));
+            updateUpgradeUI();
+        }
+
+        // Game State
+        let wave = 1;
+        let gameOver = false;
+        let waveActive = false;
+        let isChoosingCard = false;
+        let enemiesToSpawn = 0;
+        let enemySpawnTimer = 0;
+        let currentBoss = null;
+        let keys = {};
+        let mouse = { x: 0, y: 0, isDown: false };
+        let autoFireTimer = 0;
+
+        // Player Stats & Card Modifiers
+        let player = {
+            x: canvas.width / 2,
+            y: canvas.height / 2,
+            radius: 15,
+            color: '#4B5320',
+            speed: 3.5,
+            maxShield: 100,
+            shield: 100,
+            regenDelay: 180,
+            shieldRegenTimer: 0,
+            maxAmmo: 32,
+            ammo: 32,
+            damage: 15,
+            fireRate: 8, // Frames between automatic shots
+            isReloading: false,
+            grenades: 4,
+            angle: 0
+        };
+
+        let bullets = [];
+        let grenades = [];
+        let explosions = [];
+        let enemies = [];
+        let particles = [];
+
+        // Dynamic Upgrades Cost Formula
+        const getCost = (lvl, base) => Math.floor(base * Math.pow(1.5, lvl - 1));
+
+        function updateUpgradeUI() {
+            shardsCountEl.textContent = stats.shards;
+            inGameShardsEl.textContent = stats.shards;
+
+            document.getElementById('lvl-shield').textContent = stats.shieldLvl;
+            document.getElementById('cost-shield').textContent = getCost(stats.shieldLvl, 10);
+            document.getElementById('btn-up-shield').disabled = stats.shards < getCost(stats.shieldLvl, 10);
+
+            document.getElementById('lvl-regen').textContent = stats.regenLvl;
+            document.getElementById('cost-regen').textContent = getCost(stats.regenLvl, 15);
+            document.getElementById('btn-up-regen').disabled = stats.shards < getCost(stats.regenLvl, 15);
+
+            document.getElementById('lvl-damage').textContent = stats.damageLvl;
+            document.getElementById('cost-damage').textContent = getCost(stats.damageLvl, 12);
+            document.getElementById('btn-up-damage').disabled = stats.shards < getCost(stats.damageLvl, 12);
+
+            document.getElementById('lvl-ammo').textContent = stats.ammoLvl;
+            document.getElementById('cost-ammo').textContent = getCost(stats.ammoLvl, 8);
+            document.getElementById('btn-up-ammo').disabled = stats.shards < getCost(stats.ammoLvl, 8);
+        }
+
+        function buyUpgrade(type) {
+            if (type === 'shield' && stats.shards >= getCost(stats.shieldLvl, 10)) {
+                stats.shards -= getCost(stats.shieldLvl, 10);
+                stats.shieldLvl++;
+            } else if (type === 'regen' && stats.shards >= getCost(stats.regenLvl, 15)) {
+                stats.shards -= getCost(stats.regenLvl, 15);
+                stats.regenLvl++;
+            } else if (type === 'damage' && stats.shards >= getCost(stats.damageLvl, 12)) {
+                stats.shards -= getCost(stats.damageLvl, 12);
+                stats.damageLvl++;
+            } else if (type === 'ammo' && stats.shards >= getCost(stats.ammoLvl, 8)) {
+                stats.shards -= getCost(stats.ammoLvl, 8);
+                stats.ammoLvl++;
+            }
+            saveProgress();
+        }
+
+        // Available In-Game Card Pool
+        const cardPool = [
+            { icon: '⚡', title: 'Overclocked Motor', desc: '+25% AR Fire Rate', apply: () => player.fireRate = Math.max(3, player.fireRate - 2) },
+            { icon: '💥', title: 'High-Caliber Rounds', desc: '+8 Bullet Damage', apply: () => player.damage += 8 },
+            { icon: '🏃', title: 'Thruster Pack', desc: '+20% Movement Speed', apply: () => player.speed += 0.7 },
+            { icon: '🛡️', title: 'Overshield Surge', desc: '+30 Max Shields & Heal', apply: () => { player.maxShield += 30; player.shield = player.maxShield; } },
+            { icon: '💣', title: 'Grenade Cache', desc: '+3 Plasma Grenades', apply: () => { player.grenades += 3; grenadesEl.textContent = player.grenades; } },
+            { icon: '🔋', title: 'Quick Recharge', desc: '-30% Shield Regen Delay', apply: () => player.regenDelay = Math.max(30, player.regenDelay - 40) },
+            { icon: '📦', title: 'Extended Mag', desc: '+12 AR Magazine Size', apply: () => player.maxAmmo += 12 }
+        ];
+
+        // Event Listeners
+        window.addEventListener('keydown', e => {
+            keys[e.key.toLowerCase()] = true;
+            if (e.key.toLowerCase() === 'r' && !player.isReloading && player.ammo < player.maxAmmo) {
+                reload();
+            }
+        });
+        window.addEventListener('keyup', e => keys[e.key.toLowerCase()] = false);
+        canvas.addEventListener('mousemove', e => {
+            const rect = canvas.getBoundingClientRect();
+            mouse.x = e.clientX - rect.left;
+            mouse.y = e.clientY - rect.top;
+        });
+        canvas.addEventListener('mousedown', e => {
+            if (gameOver || !waveActive || isChoosingCard) return;
+            if (e.button === 0) {
+                mouse.isDown = true;
+            } else if (e.button === 2) {
+                throwGrenade();
+            }
+        });
+        window.addEventListener('mouseup', e => {
+            if (e.button === 0) mouse.isDown = false;
+        });
+        canvas.addEventListener('contextmenu', e => e.preventDefault());
+
+        function reload() {
+            player.isReloading = true;
+            setTimeout(() => {
+                player.ammo = player.maxAmmo;
+                player.isReloading = false;
+                ammoEl.textContent = player.ammo;
+            }, 1000);
+        }
+
+        function shootBullet() {
+            if (player.isReloading || player.ammo <= 0) return;
+            
+            player.ammo--;
+            ammoEl.textContent = player.ammo;
+            const angle = Math.atan2(mouse.y - player.y, mouse.x - player.x);
+            const spread = (Math.random() - 0.5) * 0.12;
+
+            bullets.push({
+                x: player.x + Math.cos(angle) * 20,
+                y: player.y + Math.sin(angle) * 20,
+                vx: Math.cos(angle + spread) * 11,
+                vy: Math.sin(angle + spread) * 11,
+                radius: 3,
+                damage: player.damage
+            });
+
+            if (player.ammo === 0) reload();
+        }
+
+        function throwGrenade() {
+            if (player.grenades <= 0) return;
+            player.grenades--;
+            grenadesEl.textContent = player.grenades;
+
+            const angle = Math.atan2(mouse.y - player.y, mouse.x - player.x);
+            grenades.push({
+                x: player.x,
+                y: player.y,
+                vx: Math.cos(angle) * 7,
+                vy: Math.sin(angle) * 7,
+                fuse: 55
+            });
+        }
+
+        function triggerCardSelection() {
+            isChoosingCard = true;
+            cardsBox.innerHTML = '';
+
+            // Pick 3 random cards from the pool
+            let shuffled = [...cardPool].sort(() => 0.5 - Math.random());
+            let selectedCards = shuffled.slice(0, 3);
+
+            selectedCards.forEach(card => {
+                let cardEl = document.createElement('div');
+                cardEl.className = 'card';
+                cardEl.innerHTML = `
+                    <div class="card-icon">${card.icon}</div>
+                    <div class="card-title">${card.title}</div>
+                    <div class="card-desc">${card.desc}</div>
+                `;
+                cardEl.onclick = () => {
+                    card.apply();
+                    cardSelectionScreen.style.display = 'none';
+                    isChoosingCard = false;
+                    wave++;
+                    setTimeout(startWave, 1000);
+                };
+                cardsBox.appendChild(cardEl);
+            });
+
+            cardSelectionScreen.style.display = 'flex';
+        }
+
+        function startWave() {
+            waveActive = true;
+            waveEl.textContent = wave;
+            
+            waveBanner.textContent = wave === 5 ? "BOSS WAVE: BRUTE CHIEFTAIN" : `WAVE ${wave}`;
+            waveBanner.style.opacity = '1';
+            setTimeout(() => waveBanner.style.opacity = '0', 2500);
+
+            if (wave === 5) {
+                enemiesToSpawn = 0;
+                spawnBoss();
+            } else {
+                enemiesToSpawn = 6 + (wave * 4);
+            }
+        }
+
+        function spawnEnemy() {
+            let x, y;
+            if (Math.random() < 0.5) {
+                x = Math.random() < 0.5 ? -20 : canvas.width + 20;
+                y = Math.random() * canvas.height;
+            } else {
+                x = Math.random() * canvas.width;
+                y = Math.random() < 0.5 ? -20 : canvas.height + 20;
+            }
+
+            const hpMultiplier = 1 + (wave * 0.25);
+            const isElite = Math.random() < (0.2 + (wave * 0.08));
+
+            if (isElite) {
+                enemies.push({
+                    type: 'elite', x, y,
+                    radius: 17,
+                    color: '#3366ff',
+                    speed: 2.1 + (wave * 0.05),
+                    hp: 75 * hpMultiplier,
+                    maxHp: 75 * hpMultiplier,
+                    damage: 20
+                });
+            } else {
+                enemies.push({
+                    type: 'grunt', x, y,
+                    radius: 13,
+                    color: '#ff8800',
+                    speed: 1.6 + (wave * 0.05),
+                    hp: 30 * hpMultiplier,
+                    maxHp: 30 * hpMultiplier,
+                    damage: 10
+                });
+            }
+        }
+
+        function spawnBoss() {
+            currentBoss = {
+                type: 'boss',
+                x: canvas.width / 2,
+                y: -50,
+                radius: 35,
+                color: '#800000',
+                speed: 1.8,
+                hp: 1200,
+                maxHp: 1200,
+                damage: 40
+            };
+            enemies.push(currentBoss);
+            bossHud.style.display = 'block';
+        }
+
+        function createCrystalParticle(x, y) {
+            for (let i = 0; i < 4; i++) {
+                particles.push({
+                    x, y,
+                    vx: (Math.random() - 0.5) * 4,
+                    vy: (Math.random() - 0.5) * 4,
+                    life: 25,
+                    color: '#a64dff'
+                });
+            }
+        }
+
+        function update() {
+            if (gameOver || isChoosingCard) return;
+
+            // Full Auto Firing
+            if (mouse.isDown && waveActive) {
+                autoFireTimer++;
+                if (autoFireTimer >= player.fireRate) {
+                    shootBullet();
+                    autoFireTimer = 0;
+                }
+            } else {
+                autoFireTimer = player.fireRate; // Ready to shoot immediately on next click
+            }
+
+            // Player Movement
+            if (keys['w'] && player.y > player.radius) player.y -= player.speed;
+            if (keys['s'] && player.y < canvas.height - player.radius) player.y += player.speed;
+            if (keys['a'] && player.x > player.radius) player.x -= player.speed;
+            if (keys['d'] && player.x < canvas.width - player.radius) player.x += player.speed;
+
+            player.angle = Math.atan2(mouse.y - player.y, mouse.x - player.x);
+
+            // Shield Recharge
+            player.shieldRegenTimer++;
+            if (player.shieldRegenTimer > player.regenDelay && player.shield < player.maxShield) {
+                player.shield = Math.min(player.maxShield, player.shield + 1.2);
+                shieldBar.style.width = `${(player.shield / player.maxShield) * 100}%`;
+            }
+
+            // Spawning Logic
+            if (waveActive && enemiesToSpawn > 0) {
+                enemySpawnTimer++;
+                if (enemySpawnTimer > Math.max(20, 70 - (wave * 5))) {
+                    spawnEnemy();
+                    enemiesToSpawn--;
+                    enemySpawnTimer = 0;
+                }
+            }
+
+            // Update Bullets
+            bullets.forEach((b, index) => {
+                b.x += b.vx;
+                b.y += b.vy;
+                if (b.x < 0 || b.x > canvas.width || b.y < 0 || b.y > canvas.height) {
+                    bullets.splice(index, 1);
+                }
+            });
+
+            // Update Grenades
+            grenades.forEach((g, index) => {
+                g.x += g.vx; g.y += g.vy;
+                g.vx *= 0.95; g.vy *= 0.95;
+                g.fuse--;
+                if (g.fuse <= 0) {
+                    explosions.push({ x: g.x, y: g.y, radius: 5, maxRadius: 75 });
+                    grenades.splice(index, 1);
+                }
+            });
+
+            // Update Explosions
+            explosions.forEach((ex, index) => {
+                ex.radius += 4;
+                enemies.forEach(enemy => {
+                    const dist = Math.hypot(ex.x - enemy.x, ex.y - enemy.y);
+                    if (dist < ex.radius + enemy.radius) {
+                        enemy.hp -= 4;
+                    }
+                });
+                if (ex.radius >= ex.maxRadius) explosions.splice(index, 1);
+            });
+
+            // Update Particles
+            particles.forEach((p, idx) => {
+                p.x += p.vx; p.y += p.vy;
+                p.life--;
+                if (p.life <= 0) particles.splice(idx, 1);
+            });
+
+            // Update Enemies
+            enemies.forEach((enemy, eIndex) => {
+                const angle = Math.atan2(player.y - enemy.y, player.x - enemy.x);
+                enemy.x += Math.cos(angle) * enemy.speed;
+                enemy.y += Math.sin(angle) * enemy.speed;
+
+                // Player Collision
+                const distToPlayer = Math.hypot(player.x - enemy.x, player.y - enemy.y);
+                if (distToPlayer < player.radius + enemy.radius) {
+                    takeDamage(enemy.damage);
+                    if (enemy.type !== 'boss') enemies.splice(eIndex, 1);
+                    return;
+                }
+
+                // Bullet Hits
+                bullets.forEach((b, bIndex) => {
+                    const dist = Math.hypot(b.x - enemy.x, b.y - enemy.y);
+                    if (dist < b.radius + enemy.radius) {
+                        enemy.hp -= b.damage;
+                        bullets.splice(bIndex, 1);
+                    }
+                });
+
+                // Boss Health UI
+                if (enemy.type === 'boss') {
+                    bossHpBar.style.width = `${Math.max(0, (enemy.hp / enemy.maxHp) * 100)}%`;
+                }
+
+                // Enemy Death Check
+                if (enemy.hp <= 0) {
+                    createCrystalParticle(enemy.x, enemy.y);
+                    if (enemy.type === 'boss') {
+                        bossHud.style.display = 'none';
+                        currentBoss = null;
+                        triggerVictory();
+                    }
+                    enemies.splice(eIndex, 1);
+                }
+            });
+
+            // Check Next Wave / Trigger Upgrade Cards
+            if (waveActive && enemies.length === 0 && enemiesToSpawn === 0 && !currentBoss) {
+                waveActive = false;
+                setTimeout(triggerCardSelection, 1000);
+            }
+        }
+
+        function takeDamage(amount) {
+            player.shieldRegenTimer = 0;
+            player.shield -= amount;
+            if (player.shield <= 0) {
+                player.shield = 0;
+                endGame(false);
+            }
+            shieldBar.style.width = `${(player.shield / player.maxShield) * 100}%`;
+        }
+
+        function endGame(victory = false) {
+            gameOver = true;
+            bossHud.style.display = 'none';
+            mouse.isDown = false;
+
+            let earnedShards = (wave - 1) * 15;
+            if (victory) earnedShards += 50;
+
+            stats.shards += earnedShards;
+            saveProgress();
+
+            screenTitle.textContent = victory ? "VICTORY ACHIEVED!" : "MISSION FAILED";
+            screenTitle.style.color = victory ? "#00ffcc" : "#ff3333";
+            finalWaveEl.textContent = wave;
+            earnedShardsText.textContent = `+${earnedShards} Shards Earned!`;
+            gameOverScreen.style.display = 'flex';
+        }
+
+        function triggerVictory() {
+            endGame(true);
+        }
+
+        function startNewGame() {
+            // Apply Base Upgrades
+            player.maxShield = 100 + (stats.shieldLvl - 1) * 20;
+            player.shield = player.maxShield;
+            player.regenDelay = Math.max(60, 180 - (stats.regenLvl - 1) * 18);
+            player.damage = 15 + (stats.damageLvl - 1) * 5;
+            player.maxAmmo = 32 + (stats.ammoLvl - 1) * 8;
+            player.ammo = player.maxAmmo;
+            player.speed = 3.5;
+            player.fireRate = 8;
+
+            // Reset Game state
+            wave = 1;
+            enemies = [];
+            bullets = [];
+            grenades = [];
+            explosions = [];
+            player.x = canvas.width / 2;
+            player.y = canvas.height / 2;
+            player.grenades = 4;
+            gameOver = false;
+            isChoosingCard = false;
+            currentBoss = null;
+
+            shieldBar.style.width = '100%';
+            ammoEl.textContent = player.ammo;
+            grenadesEl.textContent = player.grenades;
+            gameOverScreen.style.display = 'none';
+            cardSelectionScreen.style.display = 'none';
+
+            startWave();
+        }
+
+        function draw() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            // Draw Grenades
+            grenades.forEach(g => {
+                ctx.beginPath();
+                ctx.arc(g.x, g.y, 6, 0, Math.PI * 2);
+                ctx.fillStyle = '#00ffff';
+                ctx.shadowBlur = 10;
+                ctx.shadowColor = '#00ffff';
+                ctx.fill();
+                ctx.shadowBlur = 0;
+            });
+
+            // Draw Explosions
+            explosions.forEach(ex => {
+                ctx.beginPath();
+                ctx.arc(ex.x, ex.y, ex.radius, 0, Math.PI * 2);
+                ctx.fillStyle = `rgba(0, 255, 255, ${1 - ex.radius / ex.maxRadius})`;
+                ctx.fill();
+            });
+
+            // Draw Particles
+            particles.forEach(p => {
+                ctx.fillStyle = p.color;
+                ctx.fillRect(p.x, p.y, 4, 4);
+            });
+
+            // Draw Bullets
+            bullets.forEach(b => {
+                ctx.beginPath();
+                ctx.arc(b.x, b.y, b.radius, 0, Math.PI * 2);
+                ctx.fillStyle = '#ffff66';
+                ctx.fill();
+            });
+
+            // Draw Enemies
+            enemies.forEach(enemy => {
+                ctx.save();
+                ctx.translate(enemy.x, enemy.y);
+                
+                ctx.beginPath();
+                ctx.arc(0, 0, enemy.radius, 0, Math.PI * 2);
+                ctx.fillStyle = enemy.color;
+                ctx.fill();
+
+                if (enemy.type === 'boss') {
+                    ctx.strokeStyle = '#ff9900';
+                    ctx.lineWidth = 4;
+                    ctx.stroke();
+                } else {
+                    ctx.fillStyle = '#ff0000';
+                    ctx.fillRect(-enemy.radius, -enemy.radius - 8, enemy.radius * 2, 4);
+                    ctx.fillStyle = '#00ff00';
+                    ctx.fillRect(-enemy.radius, -enemy.radius - 8, (enemy.radius * 2) * (enemy.hp / enemy.maxHp), 4);
+                }
+
+                ctx.restore();
+            });
+
+            // Draw Player
+            if (!gameOver) {
+                ctx.save();
+                ctx.translate(player.x, player.y);
+                ctx.rotate(player.angle);
+
+                // Gun
+                ctx.fillStyle = '#333';
+                ctx.fillRect(5, 5, 16, 4);
+
+                // Helmet Armor
+                ctx.beginPath();
+                ctx.arc(0, 0, player.radius, 0, Math.PI * 2);
+                ctx.fillStyle = player.color;
+                ctx.fill();
+
+                // Gold Visor
+                ctx.beginPath();
+                ctx.arc(5, 0, 6, -Math.PI / 3, Math.PI / 3);
+                ctx.fillStyle = '#ffcc00';
+                ctx.fill();
+
+                ctx.restore();
+            }
+        }
+
+        function loop() {
+            update();
+            draw();
+            requestAnimationFrame(loop);
+        }
+
+        updateUpgradeUI();
+        loop();
+    </script>
+</body>
+</html>

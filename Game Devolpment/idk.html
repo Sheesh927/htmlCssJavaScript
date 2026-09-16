@@ -1,0 +1,1574 @@
+<!DOCTYPE html><html lang="en"><head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>250-Rarity 5-World RNG Simulator</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #121214;
+            color: #ffffff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 20px 0;
+            transition: background-color 0.4s ease;
+        }
+
+        .container {
+            background-color: #1e1e24;
+            border-radius: 16px;
+            padding: 30px;
+            width: 440px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            border: 2px solid var(--world-color, #2d2d38);
+            transition: border-color 0.4s ease;
+        }
+
+        h1 {
+            margin-top: 0;
+            font-size: 1.8rem;
+            color: #e0e0e0;
+        }
+
+        /* World Selector Bar */
+        .world-banner {
+            background-color: #16161a;
+            border: 1px solid var(--world-color, #3d3d4e);
+            border-radius: 10px;
+            padding: 10px;
+            margin-bottom: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: border-color 0.4s ease;
+        }
+
+        .world-nav-btn {
+            background-color: #2b2b36;
+            color: #fff;
+            border: 1px solid #444;
+            padding: 6px 10px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 0.8rem;
+            transition: all 0.2s;
+        }
+
+        .world-nav-btn:hover:not(:disabled) {
+            background-color: #3f3f50;
+        }
+
+        .world-nav-btn:disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+        }
+
+        .world-info {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .world-title {
+            font-size: 1rem;
+            font-weight: 800;
+            color: var(--world-color, #fff);
+        }
+
+        .world-unlock-status {
+            font-size: 0.75rem;
+            color: #aaa;
+            margin-top: 2px;
+        }
+
+        .coin-container {
+            background-color: #2b2b36;
+            border: 1px solid #3d3d4e;
+            border-radius: 10px;
+            padding: 10px 15px;
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .coin-label {
+            font-size: 0.9rem;
+            color: #aaa;
+            font-weight: 600;
+        }
+
+        .coin-amount {
+            font-size: 1.3rem;
+            font-weight: 800;
+            color: #facc15;
+        }
+
+        .luck-stats {
+            background-color: #252530;
+            border-radius: 8px;
+            padding: 10px;
+            margin-bottom: 15px;
+            font-size: 0.95rem;
+            color: #a7f3d0;
+            font-weight: bold;
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 5px;
+        }
+
+        .stat-box {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .stat-title {
+            font-size: 0.65rem;
+            color: #888;
+            text-transform: uppercase;
+        }
+
+        .controls-group {
+            display: flex;
+            gap: 10px;
+        }
+
+        .roll-btn {
+            flex: 2;
+            background: linear-gradient(135deg, #6366f1, #a855f7);
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: transform 0.1s, filter 0.2s;
+        }
+
+        .roll-btn:hover {
+            filter: brightness(1.15);
+        }
+
+        .roll-btn:active {
+            transform: scale(0.98);
+        }
+
+        .roll-btn:disabled {
+            background: #444;
+            cursor: not-allowed;
+            filter: none;
+        }
+
+        .auto-btn {
+            flex: 1;
+            background-color: #374151;
+            color: #9ca3af;
+            border: 1px solid #4b5563;
+            padding: 12px 10px;
+            font-size: 0.95rem;
+            font-weight: bold;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .auto-btn:disabled {
+            background-color: #22252a;
+            border-color: #333;
+            color: #555;
+            cursor: not-allowed;
+        }
+
+        .auto-btn.active {
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: white;
+            border-color: #10b981;
+            box-shadow: 0 0 10px rgba(16, 185, 129, 0.4);
+        }
+
+        .display-card {
+            margin-top: 20px;
+            padding: 20px;
+            border-radius: 12px;
+            background-color: #252530;
+            border: 2px solid #333;
+            min-height: 110px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            transition: all 0.2s ease;
+        }
+
+        .display-card.rolling {
+            animation: pulse-border 0.15s infinite alternate;
+        }
+
+        .display-card.rare-pop {
+            animation: pop-jackpot 0.4s ease-out;
+        }
+
+        @keyframes pulse-border {
+            0% { border-color: #6366f1; transform: scale(0.99); }
+            100% { border-color: #a855f7; transform: scale(1.01); }
+        }
+
+        @keyframes pop-jackpot {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.08); }
+            100% { transform: scale(1); }
+        }
+
+        .rarity-tier {
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #888;
+            margin-bottom: 5px;
+        }
+
+        .rarity-title {
+            font-size: 1.8rem;
+            font-weight: 800;
+            margin: 5px 0;
+            word-break: break-word;
+        }
+
+        .rarity-odds {
+            font-size: 0.9rem;
+            color: #bbb;
+            margin-top: 5px;
+        }
+
+        .coins-earned {
+            font-size: 0.95rem;
+            font-weight: 700;
+            color: #4ade80;
+            margin-top: 8px;
+        }
+
+        /* Eggs & Pet Section */
+        .pets-section {
+            margin-top: 25px;
+            text-align: left;
+            border-top: 1px solid #333;
+            padding-top: 15px;
+        }
+
+        .section-title {
+            font-size: 1.2rem;
+            color: #f43f5e;
+            margin-bottom: 12px;
+            text-align: center;
+            font-weight: 800;
+        }
+
+        .eggs-grid {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .egg-card {
+            flex: 1;
+            background-color: #252530;
+            border: 1px solid #3d3d4e;
+            border-radius: 8px;
+            padding: 10px 6px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            text-align: center;
+        }
+
+        .egg-icon {
+            font-size: 1.8rem;
+        }
+
+        .egg-name {
+            font-weight: bold;
+            font-size: 0.8rem;
+            color: #fff;
+        }
+
+        .hatch-btn {
+            background-color: #f43f5e;
+            color: white;
+            border: none;
+            padding: 6px 8px;
+            border-radius: 6px;
+            font-weight: bold;
+            font-size: 0.75rem;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 4px;
+            transition: background-color 0.2s;
+        }
+
+        .hatch-btn:hover {
+            background-color: #e11d48;
+        }
+
+        .hatch-btn:disabled {
+            background-color: #444;
+            color: #888;
+            cursor: not-allowed;
+        }
+
+        .equipped-pets-container {
+            background-color: #18181c;
+            border: 1px solid #2d2d38;
+            border-radius: 8px;
+            padding: 10px;
+            margin-top: 10px;
+        }
+
+        .pets-subtitle {
+            font-size: 0.8rem;
+            font-weight: bold;
+            color: #888;
+            margin-bottom: 8px;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .pet-slots {
+            display: flex;
+            gap: 8px;
+        }
+
+        .pet-slot {
+            flex: 1;
+            background-color: #22222a;
+            border: 1px dashed #444;
+            border-radius: 6px;
+            padding: 8px;
+            min-height: 48px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.75rem;
+        }
+
+        .pet-slot.filled {
+            border: 1px solid #f43f5e;
+            background-color: #2a1b24;
+        }
+
+        /* Shop Section */
+        .shop-section {
+            margin-top: 25px;
+            text-align: left;
+            border-top: 1px solid #333;
+            padding-top: 15px;
+        }
+
+        .shop-title {
+            font-size: 1.2rem;
+            color: #facc15;
+            margin-bottom: 12px;
+            text-align: center;
+            font-weight: 800;
+        }
+
+        .multiplier-bar {
+            display: flex;
+            justify-content: space-between;
+            background-color: #18181c;
+            border: 1px solid #2d2d38;
+            border-radius: 8px;
+            padding: 4px;
+            margin-bottom: 12px;
+            gap: 4px;
+        }
+
+        .mult-btn {
+            flex: 1;
+            background: transparent;
+            color: #888;
+            border: none;
+            padding: 6px 0;
+            font-size: 0.75rem;
+            font-weight: bold;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .mult-btn:hover {
+            color: #fff;
+        }
+
+        .mult-btn.active {
+            background-color: #6366f1;
+            color: white;
+            box-shadow: 0 0 8px rgba(99, 102, 241, 0.4);
+        }
+
+        .shop-item {
+            background-color: #252530;
+            border: 1px solid #3d3d4e;
+            border-radius: 8px;
+            padding: 12px;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .item-info {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .item-name {
+            font-weight: bold;
+            font-size: 0.95rem;
+            color: #fff;
+        }
+
+        .item-desc {
+            font-size: 0.8rem;
+            color: #aaa;
+            margin-top: 2px;
+        }
+
+        .buy-btn {
+            background-color: #22c55e;
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            min-width: 90px;
+            text-align: center;
+        }
+
+        .buy-btn:hover {
+            background-color: #16a34a;
+        }
+
+        .buy-btn:disabled {
+            background-color: #444;
+            color: #888;
+            cursor: not-allowed;
+        }
+
+        /* Collection Log */
+        .inventory-section {
+            margin-top: 25px;
+            text-align: left;
+            border-top: 1px solid #333;
+            padding-top: 15px;
+        }
+
+        .inventory-title {
+            font-size: 1.2rem;
+            color: #60a5fa;
+            margin-bottom: 12px;
+            text-align: center;
+            font-weight: 800;
+        }
+
+        .inventory-grid {
+            max-height: 250px;
+            overflow-y: auto;
+            background-color: #16161a;
+            border: 1px solid #2d2d38;
+            border-radius: 8px;
+            padding: 8px;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .inventory-grid::-webkit-scrollbar {
+            width: 6px;
+        }
+        .inventory-grid::-webkit-scrollbar-thumb {
+            background: #333;
+            border-radius: 4px;
+        }
+
+        .inventory-card {
+            background-color: #22222a;
+            border: 1px solid #2d2d38;
+            border-radius: 6px;
+            padding: 8px 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.85rem;
+        }
+
+        .inventory-card.unlocked {
+            border-left: 4px solid var(--tier-color, #aaa);
+        }
+
+        .inventory-card.locked {
+            opacity: 0.4;
+        }
+
+        .inv-name {
+            font-weight: bold;
+        }
+
+        .inv-count {
+            background-color: #121214;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: #a7f3d0;
+        }
+    </style></head><body>
+
+    <div class="container" id="mainContainer">
+        <h1>RNG Roll Simulator</h1>
+
+        <!-- World Selector -->
+        <div class="world-banner">
+            <button class="world-nav-btn" id="prevWorldBtn" onclick="changeWorld(-1)">&lt; Prev</button>
+            <div class="world-info">
+                <span class="world-title" id="worldTitle">World 1: Earth</span>
+                <span class="world-unlock-status" id="worldStatus">Unlocked</span>
+            </div>
+            <button class="world-nav-btn" id="nextWorldBtn" onclick="changeWorld(1)">Next &gt;</button>
+        </div>
+
+        <div class="coin-container">
+            <span class="coin-label">🪙 COINS</span>
+            <span class="coin-amount" id="coinDisplay">0</span>
+        </div>
+
+        <div class="luck-stats">
+            <div class="stat-box">
+                <span class="stat-title">Base Luck</span>
+                <span id="luckDisplay">1.0x</span>
+            </div>
+            <div class="stat-box">
+                <span class="stat-title">Pet Luck</span>
+                <span id="petLuckDisplay" style="color: #f43f5e;">+0.0x</span>
+            </div>
+            <div class="stat-box">
+                <span class="stat-title">Coin Mult</span>
+                <span id="coinMultDisplay" style="color: #facc15;">1.0x</span>
+            </div>
+            <div class="stat-box">
+                <span class="stat-title">Cooldown</span>
+                <span id="speedDisplay">2.0s</span>
+            </div>
+        </div>
+
+        <div class="controls-group">
+            <button class="roll-btn" id="rollBtn" onclick="handleRoll()">ROLL</button>
+            <button class="auto-btn" id="autoBtn" onclick="toggleAutoRoll()" disabled>🔒 LOCKED</button>
+        </div>
+
+        <div class="display-card" id="displayCard">
+            <div class="rarity-tier" id="resultTier">Ready to Roll</div>
+            <div class="rarity-title" id="resultName">???</div>
+            <div class="rarity-odds" id="resultOdds">Click roll to test your luck!</div>
+            <div class="coins-earned" id="coinsEarned"></div>
+        </div>
+
+        <!-- Eggs & Pet Section -->
+        <div class="pets-section">
+            <div class="section-title">🥚 WORLD EGGS &amp; PETS</div>
+            <div class="eggs-grid" id="eggsContainer">
+                <!-- Eggs populated dynamically -->
+            </div>
+
+            <div class="equipped-pets-container">
+                <div class="pets-subtitle">
+                    <span>BEST PETS EQUIPPED (MAX 3)</span>
+                    <span id="totalPetBonusText" style="color: #f43f5e;">+0.0x Luck</span>
+                </div>
+                <div class="pet-slots" id="petSlots">
+                    <div class="pet-slot">Empty</div>
+                    <div class="pet-slot">Empty</div>
+                    <div class="pet-slot">Empty</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Shop Section -->
+        <div class="shop-section">
+            <div class="shop-title">🛒 UPGRADE SHOP</div>
+
+            <!-- Multiplier Selector -->
+            <div class="multiplier-bar">
+                <button class="mult-btn active" onclick="setBuyMultiplier(1)">1x</button>
+                <button class="mult-btn" onclick="setBuyMultiplier(5)">5x</button>
+                <button class="mult-btn" onclick="setBuyMultiplier(10)">10x</button>
+                <button class="mult-btn" onclick="setBuyMultiplier(20)">20x</button>
+                <button class="mult-btn" onclick="setBuyMultiplier(50)">50x</button>
+                <button class="mult-btn" onclick="setBuyMultiplier(100)">100x</button>
+            </div>
+
+            <!-- Permanent Luck Item -->
+            <div class="shop-item">
+                <div class="item-info">
+                    <span class="item-name" id="permLuckName">+0.3x Permanent Luck</span>
+                    <span class="item-desc" id="permLuckDesc">Price: 30 Coins</span>
+                </div>
+                <button class="buy-btn" id="buyPermBtn" onclick="buyPermLuck(0.3)">30 🪙</button>
+            </div>
+
+            <!-- Coin Multiplier Item -->
+            <div class="shop-item">
+                <div class="item-info">
+                    <span class="item-name" id="coinMultName">+0.5x Coin Multiplier</span>
+                    <span class="item-desc" id="coinMultDesc">Price: 75 Coins</span>
+                </div>
+                <button class="buy-btn" id="buyCoinMultBtn" onclick="buyCoinMultiplier(0.5)">75 🪙</button>
+            </div>
+
+            <!-- Temporary Luck Item -->
+            <div class="shop-item">
+                <div class="item-info">
+                    <span class="item-name" id="tempLuckName">+0.3x Luck Boost (30s)</span>
+                    <span class="item-desc" id="tempLuckDesc">Price: 80 Coins</span>
+                </div>
+                <button class="buy-btn" id="buyTempBtn" onclick="buyTempLuck(0.3, 30)">80 🪙</button>
+            </div>
+
+            <!-- Cooldown Upgrade Item -->
+            <div class="shop-item">
+                <div class="item-info">
+                    <span class="item-name">-0.3s Roll Cooldown</span>
+                    <span class="item-desc" id="speedUpgradeDesc">Price: 150 Coins</span>
+                </div>
+                <button class="buy-btn" id="buySpeedBtn" onclick="buySpeedUpgrade()">150 🪙</button>
+            </div>
+
+            <!-- Auto Roll Unlock Upgrade -->
+            <div class="shop-item">
+                <div class="item-info">
+                    <span class="item-name">Unlock Auto-Roll</span>
+                    <span class="item-desc" id="autoRollDesc">Price: 1.5K Coins</span>
+                </div>
+                <button class="buy-btn" id="buyAutoRollBtn" onclick="buyAutoRollUnlock()">1.5K 🪙</button>
+            </div>
+        </div>
+
+        <!-- Collection Log -->
+        <div class="inventory-section">
+            <div class="inventory-title" id="inventoryTitle">📦 EARTH COLLECTION LOG</div>
+            <div class="inventory-grid" id="inventoryContainer"></div>
+        </div>
+    </div>
+
+    <script>
+        function formatNumber(num) {
+            if (num === null || num === undefined) return "0";
+            if (num < 1000) return num.toString();
+
+            const suffixes = ["", "K", "M", "B", "T", "Qa", "Qi", "Sx", "Sp", "Oc", "No", "Dc"];
+            const i = Math.floor(Math.log10(num) / 3);
+
+            if (i >= suffixes.length) {
+                return num.toExponential(2);
+            }
+
+            const formatted = (num / Math.pow(10, i * 3)).toFixed(2);
+            return parseFloat(formatted).toString() + suffixes[i];
+        }
+
+        let audioCtx = null;
+
+        function getAudioContext() {
+            if (!audioCtx) {
+                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            }
+            if (audioCtx.state === 'suspended') {
+                audioCtx.resume();
+            }
+            return audioCtx;
+        }
+
+        function playTickSound() {
+            const ctx = getAudioContext();
+            const osc = ctx.createOscillator();
+            const gain = ctx.createGain();
+            osc.type = 'triangle';
+            osc.frequency.setValueAtTime(300 + Math.random() * 200, ctx.currentTime);
+            gain.gain.setValueAtTime(0.05, ctx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.05);
+            osc.connect(gain);
+            gain.connect(ctx.destination);
+            osc.start();
+            osc.stop(ctx.currentTime + 0.05);
+        }
+
+        function playWinSound(tier) {
+            const ctx = getAudioContext();
+            const now = ctx.currentTime;
+            
+            if (tier >= 15) {
+                [523.25, 659.25, 783.99, 1046.50].forEach((freq, idx) => {
+                    const osc = ctx.createOscillator();
+                    const gain = ctx.createGain();
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(freq, now + idx * 0.08);
+                    gain.gain.setValueAtTime(0.15, now + idx * 0.08);
+                    gain.gain.exponentialRampToValueAtTime(0.001, now + idx * 0.08 + 0.3);
+                    osc.connect(gain);
+                    gain.connect(ctx.destination);
+                    osc.start(now + idx * 0.08);
+                    osc.stop(now + idx * 0.08 + 0.3);
+                });
+            } else {
+                const osc = ctx.createOscillator();
+                const gain = ctx.createGain();
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(440, now);
+                osc.frequency.exponentialRampToValueAtTime(880, now + 0.15);
+                gain.gain.setValueAtTime(0.1, now);
+                gain.gain.exponentialRampToValueAtTime(0.001, now + 0.15);
+                osc.connect(gain);
+                gain.connect(ctx.destination);
+                osc.start(now);
+                osc.stop(now + 0.15);
+            }
+        }
+
+        function playBuySound() {
+            const ctx = getAudioContext();
+            const now = ctx.currentTime;
+            const osc = ctx.createOscillator();
+            const gain = ctx.createGain();
+            osc.type = 'square';
+            osc.frequency.setValueAtTime(587.33, now);
+            osc.frequency.setValueAtTime(880, now + 0.08);
+            gain.gain.setValueAtTime(0.08, now);
+            gain.gain.exponentialRampToValueAtTime(0.001, now + 0.25);
+            osc.connect(gain);
+            gain.connect(ctx.destination);
+            osc.start(now);
+            osc.stop(now + 0.25);
+        }
+
+        // Game State
+        let userCoins = 0;
+        let baseLuckMultiplier = 1.0;
+        let coinMultiplier = 1.0;
+        let tempLuckMultiplierBonus = 0;
+        let tempLuckTimer = null;
+        let tempLuckTimeRemaining = 0;
+        let isRolling = false;
+        let isAutoRolling = false;
+        let isAutoRollUnlocked = false;
+        let currentWorldIndex = 0;
+
+        let buyMultiplier = 1;
+
+        // Cost states
+        let permLuckCost = 30;
+        let coinMultCost = 75;
+        const tempLuckBaseCost = 80;
+
+        let rollCooldown = 2000; 
+        const MIN_COOLDOWN = 400; 
+        let speedUpgradeCost = 150;
+
+        // Owned Pets Inventory: [{id, name, icon, luckBonus, worldId}]
+        let ownedPets = [];
+        let equippedPets = [];
+
+        // 5 WORLD DEFINITIONS (50 Rarities Each - Unlocks at Tier 50)
+        const WORLDS = [
+            {
+                id: 1,
+                name: "Earth",
+                color: "#4ade80",
+                reqTierPrevWorld: 50,
+                rewardMultiplier: 1,
+                rarities: [
+                    "Dirt", "Stone", "Copper", "Iron", "Bronze", "Silver", "Gold", "Platinum", "Emerald", "Ruby",
+                    "Sapphire", "Diamond", "Obsidian", "Bedrock", "Magma", "Granite", "Basalt", "Quartz", "Amethyst", "Topaz",
+                    "Opalescent", "Meteorite", "Volcanic", "Glacial", "Tectonic", "Geode", "Fossil", "Amber", "Crystal", "Titanium",
+                    "Cobalt", "Bismuth", "Chromium", "Tungsten", "Uranium", "Krypton", "Xenon", "Radon", "Aether Stone", "Sunstone",
+                    "Moonstone", "Star Sapphire", "Dragon Blood", "Life Core", "Gaia Shard", "Terra Form", "Heart of Earth", "Pangaea", "Primal Core", "EARTH PRIME"
+                ],
+                eggs: [
+                    {
+                        id: "w1_e1",
+                        name: "Forest Egg",
+                        cost: 100,
+                        icon: "🥚",
+                        pets: [
+                            { name: "Snail", chance: 50, luck: 0.1, icon: "🐌" },
+                            { name: "Beetle", chance: 30, luck: 0.2, icon: "🪲" },
+                            { name: "Rabbit", chance: 14, luck: 0.4, icon: "🐰" },
+                            { name: "Fox", chance: 5.5, luck: 0.8, icon: "🦊" },
+                            { name: "Forest Spirit", chance: 0.5, luck: 2.0, icon: "🌿" }
+                        ]
+                    },
+                    {
+                        id: "w1_e2",
+                        name: "Mountain Egg",
+                        cost: 1000,
+                        icon: "⛰️",
+                        pets: [
+                            { name: "Goat", chance: 50, luck: 0.5, icon: "🐐" },
+                            { name: "Eagle", chance: 30, luck: 1.0, icon: "🦅" },
+                            { name: "Wolf", chance: 14, luck: 2.0, icon: "🐺" },
+                            { name: "Bear", chance: 5.5, luck: 4.0, icon: "🐻" },
+                            { name: "Golem", chance: 0.5, luck: 10.0, icon: "🗿" }
+                        ]
+                    },
+                    {
+                        id: "w1_e3",
+                        name: "Volcano Egg",
+                        cost: 10000,
+                        icon: "🌋",
+                        pets: [
+                            { name: "Lizard", chance: 50, luck: 2.0, icon: "🦎" },
+                            { name: "Scorpion", chance: 30, luck: 4.0, icon: "🦂" },
+                            { name: "Fire Drake", chance: 14, luck: 8.0, icon: "🐉" },
+                            { name: "Magma Elemental", chance: 5.5, luck: 15.0, icon: "🔥" },
+                            { name: "Phoenix", chance: 0.5, luck: 40.0, icon: "🦅" }
+                        ]
+                    }
+                ]
+            },
+            {
+                id: 2,
+                name: "Cyberpunk City",
+                color: "#06b6d4",
+                reqTierPrevWorld: 50,
+                rewardMultiplier: 10,
+                rarities: [
+                    "Silicon", "Wire", "Battery", "Microchip", "Neon Glow", "Led Light", "Fiber Optic", "Circuit", "Transistor", "Processor",
+                    "RAM Stick", "Graphics Card", "Motherboard", "Power Cell", "Laser Grid", "Hologram", "Cyber Deck", "Data Drive", "Glitch", "Plasma Core",
+                    "Augmented Eye", "Synth Skin", "Neural Net", "AI Core", "Cyberware", "Quantum Node", "Mainframe", "Cyber Dragon", "Nanite Swarm", "Bio Hack",
+                    "Overclock", "Dark Web", "Encryption", "Firewall", "Zero Day", "Root Access", "Cyber Samurai", "Neon Overlord", "Dystopia", "Matrix Core",
+                    "Grid Master", "Singularity OS", "Cyber Ghost", "Nexus AI", "Hyper Thread", "Chrono Cyber", "Omega Code", "System Titan", "Cyber Architect", "CYBER GOD"
+                ],
+                eggs: [
+                    {
+                        id: "w2_e1",
+                        name: "Tech Egg",
+                        cost: 100000,
+                        icon: "💾",
+                        pets: [
+                            { name: "Robo-Mouse", chance: 50, luck: 5.0, icon: "🐭" },
+                            { name: "Drone", chance: 30, luck: 10.0, icon: "🛸" },
+                            { name: "Cyber Hound", chance: 14, luck: 20.0, icon: "🐕" },
+                            { name: "Synth Cat", chance: 5.5, luck: 40.0, icon: "🐱" },
+                            { name: "Glitch Sprite", chance: 0.5, luck: 100.0, icon: "👾" }
+                        ]
+                    },
+                    {
+                        id: "w2_e2",
+                        name: "Neon Egg",
+                        cost: 1000000,
+                        icon: "🏙️",
+                        pets: [
+                            { name: "Neon Bug", chance: 50, luck: 25.0, icon: "🪲" },
+                            { name: "Laser Lynx", chance: 30, luck: 50.0, icon: "🐆" },
+                            { name: "Cyber Falcon", chance: 14, luck: 100.0, icon: "🦅" },
+                            { name: "Mecha Tiger", chance: 5.5, luck: 200.0, icon: "🐅" },
+                            { name: "Matrix Serpent", chance: 0.5, luck: 500.0, icon: "🐍" }
+                        ]
+                    },
+                    {
+                        id: "w2_e3",
+                        name: "Quantum Egg",
+                        cost: 10000000,
+                        icon: "⚛️",
+                        pets: [
+                            { name: "Byte Core", chance: 50, luck: 100.0, icon: "🔮" },
+                            { name: "Data Spectre", chance: 30, luck: 200.0, icon: "👻" },
+                            { name: "AI Construct", chance: 14, luck: 400.0, icon: "🤖" },
+                            { name: "Quantum Panther", chance: 5.5, luck: 800.0, icon: "🐆" },
+                            { name: "Cyber Overlord", chance: 0.5, luck: 2000.0, icon: "👑" }
+                        ]
+                    }
+                ]
+            },
+            {
+                id: 3,
+                name: "Deep Space",
+                color: "#a855f7",
+                reqTierPrevWorld: 50,
+                rewardMultiplier: 100,
+                rarities: [
+                    "Stardust", "Asteroid", "Comet", "Meteor", "Moon Dust", "Solar Flare", "Space Dust", "Satellite", "Lunar Shard", "Orbital Ring",
+                    "Mars Rock", "Saturn Ring", "Jupiter Storm", "Pluto Ice", "Nebula Cloud", "Protostar", "Red Giant", "White Dwarf", "Blue Supergiant", "Supernova",
+                    "Pulsar", "Neutron Star", "Magnetar", "Quasar", "Black Hole", "Event Horizon", "Wormhole", "Dark Matter", "Dark Energy", "Cosmic Dust",
+                    "Galactic Core", "Solar Wind", "Astral Beacon", "Space Void", "Interstellar", "Cosmic Web", "Gamma Burst", "Tachyon Wave", "Antimatter", "Alien Artifact",
+                    "Void Entity", "Eldritch Space", "Dimensional Gate", "Horizon Shard", "Cosmic Sovereign", "Galaxy Weaver", "Infinity Void", "Universal Core", "Big Bang", "COSMIC OVERLORD"
+                ],
+                eggs: [
+                    {
+                        id: "w3_e1",
+                        name: "Lunar Egg",
+                        cost: 100000000,
+                        icon: "🌙",
+                        pets: [
+                            { name: "Moon Rabbit", chance: 50, luck: 300.0, icon: "🐇" },
+                            { name: "Star Blob", chance: 30, luck: 600.0, icon: "⭐" },
+                            { name: "Comet Fox", chance: 14, luck: 1200.0, icon: "🦊" },
+                            { name: "Astro Bear", chance: 5.5, luck: 2500.0, icon: "🐻" },
+                            { name: "Eclipse Entity", chance: 0.5, luck: 6000.0, icon: "🌑" }
+                        ]
+                    },
+                    {
+                        id: "w3_e2",
+                        name: "Nebula Egg",
+                        cost: 1000000000,
+                        icon: "🌌",
+                        pets: [
+                            { name: "Stardust Moth", chance: 50, luck: 1500.0, icon: "🦋" },
+                            { name: "Nebula Ray", chance: 30, luck: 3000.0, icon: "🐟" },
+                            { name: "Solar Griffin", chance: 14, luck: 6000.0, icon: "🦅" },
+                            { name: "Pulsar Stag", chance: 5.5, luck: 12000.0, icon: "🦌" },
+                            { name: "Galactic Dragon", chance: 0.5, luck: 30000.0, icon: "🐉" }
+                        ]
+                    },
+                    {
+                        id: "w3_e3",
+                        name: "Void Egg",
+                        cost: 10000000000,
+                        icon: "🕳️",
+                        pets: [
+                            { name: "Void Mite", chance: 50, luck: 8000.0, icon: "🕷️" },
+                            { name: "Dark Crawler", chance: 30, luck: 16000.0, icon: "🦂" },
+                            { name: "Wormhole Eye", chance: 14, luck: 32000.0, icon: "👁️" },
+                            { name: "Singularity Hound", chance: 5.5, luck: 65000.0, icon: "🐕" },
+                            { name: "Cosmic Titan", chance: 0.5, luck: 150000.0, icon: "🪐" }
+                        ]
+                    }
+                ]
+            },
+            {
+                id: 4,
+                name: "Multiverse",
+                color: "#f43f5e",
+                reqTierPrevWorld: 50,
+                rewardMultiplier: 1000,
+                rarities: [
+                    "Parallel Thread", "Echo Shard", "Mirror World", "Alternate Reality", "Split Timeline", "Paradox Spark", "Fracture", "Time Drift", "Quantum Shift", "Chrono Echo",
+                    "Dimension Gate", "Reality Tear", "Multiverse Dust", "Timeline Weaver", "Nexus Node", "Chaos Shard", "Void Echo", "Entangled Pair", "String Theory", "Infinite Loop",
+                    "Overworld", "Nether Void", "Dream Realm", "Shadow Dimension", "Aetherium", "Hyper Dimension", "Reality Prism", "Cosmic Mirror", "Paradox Core", "Spatial Rift",
+                    "Temporal Fracture", "Omni Thread", "Multiverse Engine", "Chrono Sovereign", "Nexus Overlord", "Dimensional Titan", "Eternity Loop", "Omega Reality", "Infinite Cosmos", "Reality Architect",
+                    "Prism Master", "Continuum King", "Omni Preserver", "Existential Void", "Multiverse Heart", "Paradox Sovereign", "Infinite Weaver", "Dimensional God", "Multiverse Prime", "THE OMNIVERSE"
+                ],
+                eggs: [
+                    {
+                        id: "w4_e1",
+                        name: "Dimensional Egg",
+                        cost: 100000000000,
+                        icon: "🌀",
+                        pets: [
+                            { name: "Echo Sprite", chance: 50, luck: 40000.0, icon: "✨" },
+                            { name: "Rift Runner", chance: 30, luck: 80000.0, icon: "🏃" },
+                            { name: "Parallel Cat", chance: 14, luck: 160000.0, icon: "🐈" },
+                            { name: "Paradox Owl", chance: 5.5, luck: 350000.0, icon: "🦉" },
+                            { name: "Timeline Weaver", chance: 0.5, luck: 800000.0, icon: "🕷️" }
+                        ]
+                    },
+                    {
+                        id: "w4_e2",
+                        name: "Chrono Egg",
+                        cost: 1000000000000,
+                        icon: "⏳",
+                        pets: [
+                            { name: "Time Beetle", chance: 50, luck: 200000.0, icon: "🪲" },
+                            { name: "Chrono Hound", chance: 30, luck: 400000.0, icon: "🐕" },
+                            { name: "Temporal Hawk", chance: 14, luck: 800000.0, icon: "🦅" },
+                            { name: "Hourglass Golem", chance: 5.5, luck: 1600000.0, icon: "🗿" },
+                            { name: "Eternity Monarch", chance: 0.5, luck: 4000000.0, icon: "🦋" }
+                        ]
+                    },
+                    {
+                        id: "w4_e3",
+                        name: "Omni Egg",
+                        cost: 10000000000000,
+                        icon: "🔮",
+                        pets: [
+                            { name: "Omni Spark", chance: 50, luck: 1000000.0, icon: "💥" },
+                            { name: "Prism Drake", chance: 30, luck: 2000000.0, icon: "🐉" },
+                            { name: "Fractal Phoenix", chance: 14, luck: 4000000.0, icon: "🦅" },
+                            { name: "Reality Chimera", chance: 5.5, luck: 8000000.0, icon: "🦁" },
+                            { name: "Multiverse God", chance: 0.5, luck: 20000000.0, icon: "👑" }
+                        ]
+                    }
+                ]
+            },
+            {
+                id: 5,
+                name: "God Realm",
+                color: "#facc15",
+                reqTierPrevWorld: 50,
+                rewardMultiplier: 10000,
+                rarities: [
+                    "Spark of Life", "Divine Ray", "Holy Light", "Angel Feather", "Sacred Ash", "Blessed Water", "Celestial Dew", "Ether Spark", "Sanctified Core", "Aura Spark",
+                    "Seraph Wing", "Cherub Grace", "Divine Rune", "Valhalla Shard", "Olympus Stone", "Nirvana Essence", "Ascended Soul", "Halo Prism", "Radiant Crest", "Solar Crown",
+                    "Titan Grace", "Godly Essence", "Heavenly Light", "Genesis Spark", "Creation Matter", "Eternity Gem", "Immortal Heart", "Primordial Grace", "Divine Throne", "Zeus Lightning",
+                    "Odin Raven", "Anubis Scale", "Ra Sunstar", "Shiva Flame", "Aether Sovereign", "Genesis Core", "Supreme Crown", "Godly Avatar", "Creation Engine", "Divine Presence",
+                    "Omnipresent", "Omniscient", "Omnipotent", "Ultimate Sovereign", "Alpha & Omega", "Infinite Light", "Creator's Touch", "The Origin", "Absolute Zenith", "THE SUPREME GOD"
+                ],
+                eggs: [
+                    {
+                        id: "w5_e1",
+                        name: "Angel Egg",
+                        cost: 100000000000000,
+                        icon: "👼",
+                        pets: [
+                            { name: "Cherub", chance: 50, luck: 5000000.0, icon: "👶" },
+                            { name: "Holy Sprite", chance: 30, luck: 10000000.0, icon: "🌟" },
+                            { name: "Valhalla Wolf", chance: 14, luck: 20000000.0, icon: "🐺" },
+                            { name: "Seraphim", chance: 5.5, luck: 40000000.0, icon: "🪽" },
+                            { name: "Archangel", chance: 0.5, luck: 100000000.0, icon: "⚔️" }
+                        ]
+                    },
+                    {
+                        id: "w5_e2",
+                        name: "Celestial Egg",
+                        cost: 1000000000000000,
+                        icon: "☀️",
+                        pets: [
+                            { name: "Solar Lynx", chance: 50, luck: 25000000.0, icon: "🐆" },
+                            { name: "Divine Pegasus", chance: 30, luck: 50000000.0, icon: "🦄" },
+                            { name: "Aether Sentinel", chance: 14, luck: 100000000.0, icon: "🛡️" },
+                            { name: "Genesis Serpent", chance: 5.5, luck: 200000000.0, icon: "🐍" },
+                            { name: "Sun Emperor", chance: 0.5, luck: 500000000.0, icon: "🌞" }
+                        ]
+                    },
+                    {
+                        id: "w5_e3",
+                        name: "Supreme Egg",
+                        cost: 10000000000000000,
+                        icon: "⚡",
+                        pets: [
+                            { name: "Aura Wisp", chance: 50, luck: 125000000.0, icon: "💫" },
+                            { name: "Olympian Lion", chance: 30, luck: 250000000.0, icon: "🦁" },
+                            { name: "Titan Behemoth", chance: 14, luck: 500000000.0, icon: "👹" },
+                            { name: "Primordial Dragon", chance: 5.5, luck: 1000000000.0, icon: "🐲" },
+                            { name: "THE ABSOLUTE GOD", chance: 0.5, luck: 5000000000.0, icon: "👁️" }
+                        ]
+                    }
+                ]
+            }
+        ];
+
+        const inventory = {};
+
+        WORLDS.forEach(world => {
+            world.rarityList = [];
+            let baseWeight = 50.0;
+            const decayFactor = 0.65;
+            let totalWeight = 0;
+
+            for (let i = 0; i < 50; i++) {
+                const weight = baseWeight * Math.pow(decayFactor, i);
+                totalWeight += weight;
+                const tierNum = i + 1;
+                
+                inventory[`w${world.id}_t${tierNum}`] = 0;
+
+                world.rarityList.push({
+                    tier: tierNum,
+                    name: world.rarities[i],
+                    weight: weight,
+                    coinReward: Math.floor(Math.pow(1.8, i) * 10 * world.rewardMultiplier)
+                });
+            }
+
+            world.rarityList.forEach(r => {
+                r.chance = (r.weight / totalWeight) * 100;
+                r.oneInX = Math.round(100 / r.chance);
+            });
+        });
+
+        function isWorldUnlocked(worldIndex) {
+            if (worldIndex === 0) return true;
+            const prevWorld = WORLDS[worldIndex - 1];
+            const reqTier = prevWorld.reqTierPrevWorld;
+            const key = `w${prevWorld.id}_t${reqTier}`;
+            return inventory[key] > 0;
+        }
+
+        function getTierColor(tier) {
+            if (tier <= 5) return "#a0a0a0";
+            if (tier <= 10) return "#4ade80";
+            if (tier <= 15) return "#60a5fa";
+            if (tier <= 25) return "#c084fc";
+            if (tier <= 35) return "#facc15";
+            if (tier <= 45) return "#f97316";
+            return "#ef4444";
+        }
+
+        function getPetLuckBonus() {
+            return equippedPets.reduce((sum, pet) => sum + pet.luck, 0);
+        }
+
+        function getTotalLuck() {
+            return baseLuckMultiplier + tempLuckMultiplierBonus + getPetLuckBonus();
+        }
+
+        function setBuyMultiplier(mult) {
+            buyMultiplier = mult;
+            const buttons = document.querySelectorAll('.mult-btn');
+            buttons.forEach(btn => {
+                if (parseInt(btn.innerText) === mult) {
+                    btn.classList.add('active');
+                } else {
+                    btn.classList.remove('active');
+                }
+            });
+            updateShopButtons();
+        }
+
+        function getBulkCostDetails(startCost, rate, qty) {
+            let totalCost = 0;
+            let currentCost = startCost;
+            for (let i = 0; i < qty; i++) {
+                totalCost += currentCost;
+                currentCost = Math.floor(currentCost * rate);
+            }
+            return { totalCost, nextCost: currentCost };
+        }
+
+        function changeWorld(direction) {
+            const newIndex = currentWorldIndex + direction;
+            if (newIndex >= 0 && newIndex < WORLDS.length) {
+                currentWorldIndex = newIndex;
+                updateWorldUI();
+            }
+        }
+
+        function updateWorldUI() {
+            const world = WORLDS[currentWorldIndex];
+            const unlocked = isWorldUnlocked(currentWorldIndex);
+
+            document.getElementById("worldTitle").innerText = `World ${world.id}: ${world.name}`;
+            document.getElementById("worldTitle").style.color = world.color;
+            document.getElementById("mainContainer").style.setProperty('--world-color', world.color);
+
+            const prevBtn = document.getElementById("prevWorldBtn");
+            const nextBtn = document.getElementById("nextWorldBtn");
+            prevBtn.disabled = currentWorldIndex === 0;
+            nextBtn.disabled = currentWorldIndex === WORLDS.length - 1;
+
+            const rollBtn = document.getElementById("rollBtn");
+            const worldStatus = document.getElementById("worldStatus");
+
+            if (currentWorldIndex === 0 || unlocked) {
+                worldStatus.innerText = "Unlocked";
+                worldStatus.style.color = "#4ade80";
+                rollBtn.disabled = false;
+            } else {
+                const prevWorld = WORLDS[currentWorldIndex - 1];
+                worldStatus.innerText = `🔒 Unlock T${prevWorld.reqTierPrevWorld} in ${prevWorld.name}`;
+                worldStatus.style.color = "#ef4444";
+                rollBtn.disabled = true;
+            }
+
+            document.getElementById("inventoryTitle").innerText = `📦 ${world.name.toUpperCase()} COLLECTION LOG`;
+
+            renderEggs();
+            renderInventory();
+        }
+
+        function renderEggs() {
+            const world = WORLDS[currentWorldIndex];
+            const container = document.getElementById("eggsContainer");
+            container.innerHTML = "";
+
+            world.eggs.forEach(egg => {
+                const card = document.createElement("div");
+                card.className = "egg-card";
+                card.innerHTML = `
+                    <div class="egg-icon">${egg.icon}</div>
+                    <div class="egg-name">${egg.name}</div>
+                    <div style="font-size: 0.7rem; color: #facc15;">${formatNumber(egg.cost)} 🪙</div>
+                    <button class="hatch-btn" onclick="hatchEgg('${egg.id}')" ${userCoins < egg.cost ? 'disabled' : ''}>HATCH</button>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        function hatchEgg(eggId) {
+            const world = WORLDS[currentWorldIndex];
+            const egg = world.eggs.find(e => e.id === eggId);
+            if (!egg || userCoins < egg.cost) return;
+
+            userCoins -= egg.cost;
+            playBuySound();
+
+            const rand = Math.random() * 100;
+            let cumulative = 0;
+            let selectedPet = egg.pets[0];
+
+            for (let pet of egg.pets) {
+                cumulative += pet.chance;
+                if (rand <= cumulative) {
+                    selectedPet = pet;
+                    break;
+                }
+            }
+
+            ownedPets.push({ ...selectedPet, worldId: world.id });
+            
+            autoEquipBestPets();
+
+            const displayCard = document.getElementById("displayCard");
+            const resultTier = document.getElementById("resultTier");
+            const resultName = document.getElementById("resultName");
+            const resultOdds = document.getElementById("resultOdds");
+            const coinsEarned = document.getElementById("coinsEarned");
+
+            resultTier.innerText = `HATCHED FROM ${egg.name.toUpperCase()}`;
+            resultName.innerText = `${selectedPet.icon} ${selectedPet.name}`;
+            resultName.style.color = "#f43f5e";
+            resultOdds.innerText = `Luck Bonus: +${formatNumber(selectedPet.luck)}x`;
+            coinsEarned.innerText = "";
+            displayCard.className = "display-card rare-pop";
+
+            updateUI();
+        }
+
+        function autoEquipBestPets() {
+            ownedPets.sort((a, b) => b.luck - a.luck);
+            equippedPets = ownedPets.slice(0, 3);
+        }
+
+        function renderEquippedPets() {
+            const slotsContainer = document.getElementById("petSlots");
+            slotsContainer.innerHTML = "";
+
+            for (let i = 0; i < 3; i++) {
+                const pet = equippedPets[i];
+                const slot = document.createElement("div");
+                if (pet) {
+                    slot.className = "pet-slot filled";
+                    slot.innerHTML = `
+                        <span style="font-size: 1rem;">${pet.icon}</span>
+                        <span style="font-weight: bold; font-size: 0.7rem; color:#fff;">${pet.name}</span>
+                        <span style="font-size: 0.65rem; color: #f43f5e;">+${formatNumber(pet.luck)}x</span>
+                    `;
+                } else {
+                    slot.className = "pet-slot";
+                    slot.innerText = "Empty";
+                }
+                slotsContainer.appendChild(slot);
+            }
+
+            const totalPetLuck = getPetLuckBonus();
+            document.getElementById("totalPetBonusText").innerText = `+${formatNumber(totalPetLuck)}x Luck`;
+            document.getElementById("petLuckDisplay").innerText = `+${formatNumber(totalPetLuck)}x`;
+        }
+
+        function updateStatsDisplay() {
+            const baseLuck = baseLuckMultiplier + tempLuckMultiplierBonus;
+            let luckText = `${baseLuck.toFixed(1)}x`;
+            if (tempLuckTimeRemaining > 0) {
+                luckText += ` (⚡ ${tempLuckTimeRemaining}s)`;
+            }
+            document.getElementById("luckDisplay").innerText = luckText;
+            document.getElementById("coinMultDisplay").innerText = `${coinMultiplier.toFixed(1)}x`;
+
+            if (rollCooldown <= MIN_COOLDOWN) {
+                document.getElementById("speedDisplay").innerText = "MAX (0.4s)";
+            } else {
+                document.getElementById("speedDisplay").innerText = `${(rollCooldown / 1000).toFixed(1)}s`;
+            }
+
+            renderEquippedPets();
+            updateShopButtons();
+        }
+
+        function rollRarity() {
+            const world = WORLDS[currentWorldIndex];
+            const luck = getTotalLuck();
+            for (let i = world.rarityList.length - 1; i >= 0; i--) {
+                const item = world.rarityList[i];
+                const boostedChance = item.chance * luck;
+                const roll = Math.random() * 100;
+                
+                if (roll <= boostedChance) {
+                    return item;
+                }
+            }
+            return world.rarityList[0];
+        }
+
+        function buyPermLuck(amountPerUnit) {
+            const details = getBulkCostDetails(permLuckCost, 1.4, buyMultiplier);
+            if (userCoins >= details.totalCost) {
+                userCoins -= details.totalCost;
+                baseLuckMultiplier += amountPerUnit * buyMultiplier;
+                permLuckCost = details.nextCost;
+                playBuySound();
+                updateUI();
+            }
+        }
+
+        function buyCoinMultiplier(amountPerUnit) {
+            const details = getBulkCostDetails(coinMultCost, 1.6, buyMultiplier);
+            if (userCoins >= details.totalCost) {
+                userCoins -= details.totalCost;
+                coinMultiplier += amountPerUnit * buyMultiplier;
+                coinMultCost = details.nextCost;
+                playBuySound();
+                updateUI();
+            }
+        }
+
+        function buyTempLuck(bonusLuck, durationSecondsPerUnit) {
+            const totalCost = tempLuckBaseCost * buyMultiplier;
+            if (userCoins >= totalCost) {
+                userCoins -= totalCost;
+                tempLuckMultiplierBonus = bonusLuck;
+                tempLuckTimeRemaining += durationSecondsPerUnit * buyMultiplier;
+                playBuySound();
+
+                if (tempLuckTimer) clearInterval(tempLuckTimer);
+
+                tempLuckTimer = setInterval(() => {
+                    tempLuckTimeRemaining--;
+                    if (tempLuckTimeRemaining <= 0) {
+                        clearInterval(tempLuckTimer);
+                        tempLuckTimer = null;
+                        tempLuckMultiplierBonus = 0;
+                        tempLuckTimeRemaining = 0;
+                    }
+                    updateStatsDisplay();
+                }, 1000);
+
+                updateUI();
+            }
+        }
+
+        function buySpeedUpgrade() {
+            if (rollCooldown <= MIN_COOLDOWN) return;
+
+            let possibleBuys = 0;
+            let tempCost = speedUpgradeCost;
+            let currentCooldown = rollCooldown;
+
+            for (let i = 0; i < buyMultiplier; i++) {
+                if (currentCooldown <= MIN_COOLDOWN) break;
+                possibleBuys++;
+                currentCooldown -= 300;
+            }
+
+            if (possibleBuys === 0) return;
+
+            const details = getBulkCostDetails(speedUpgradeCost, 2.0, possibleBuys);
+            if (userCoins >= details.totalCost) {
+                userCoins -= details.totalCost;
+                rollCooldown = Math.max(MIN_COOLDOWN, rollCooldown - (300 * possibleBuys));
+                speedUpgradeCost = details.nextCost;
+                playBuySound();
+                updateUI();
+            }
+        }
+
+        function buyAutoRollUnlock() {
+            const cost = 1500;
+            if (!isAutoRollUnlocked && userCoins >= cost) {
+                userCoins -= cost;
+                isAutoRollUnlocked = true;
+                playBuySound();
+                
+                const autoBtn = document.getElementById("autoBtn");
+                autoBtn.disabled = false;
+                autoBtn.innerText = "AUTO: OFF";
+                
+                updateUI();
+            }
+        }
+
+        function updateShopButtons() {
+            const permLuckDetails = getBulkCostDetails(permLuckCost, 1.4, buyMultiplier);
+            document.getElementById("permLuckName").innerText = `+${(0.3 * buyMultiplier).toFixed(1)}x Permanent Luck`;
+            document.getElementById("permLuckDesc").innerText = `Price: ${formatNumber(permLuckDetails.totalCost)} Coins`;
+            document.getElementById("buyPermBtn").innerText = `${formatNumber(permLuckDetails.totalCost)} 🪙`;
+            document.getElementById("buyPermBtn").disabled = userCoins < permLuckDetails.totalCost;
+
+            const coinMultDetails = getBulkCostDetails(coinMultCost, 1.6, buyMultiplier);
+            document.getElementById("coinMultName").innerText = `+${(0.5 * buyMultiplier).toFixed(1)}x Coin Multiplier`;
+            document.getElementById("coinMultDesc").innerText = `Price: ${formatNumber(coinMultDetails.totalCost)} Coins`;
+            document.getElementById("buyCoinMultBtn").innerText = `${formatNumber(coinMultDetails.totalCost)} 🪙`;
+            document.getElementById("buyCoinMultBtn").disabled = userCoins < coinMultDetails.totalCost;
+
+            const tempLuckTotalCost = tempLuckBaseCost * buyMultiplier;
+            const tempLuckDuration = 30 * buyMultiplier;
+            document.getElementById("tempLuckName").innerText = `+0.3x Luck Boost (${tempLuckDuration}s)`;
+            document.getElementById("tempLuckDesc").innerText = `Price: ${formatNumber(tempLuckTotalCost)} Coins`;
+            document.getElementById("buyTempBtn").innerText = `${formatNumber(tempLuckTotalCost)} 🪙`;
+            document.getElementById("buyTempBtn").disabled = userCoins < tempLuckTotalCost;
+
+            const speedBtn = document.getElementById("buySpeedBtn");
+            const speedDesc = document.getElementById("speedUpgradeDesc");
+            if (rollCooldown <= MIN_COOLDOWN) {
+                speedDesc.innerText = "MAX SPEED REACHED";
+                speedBtn.innerText = "MAX";
+                speedBtn.disabled = true;
+            } else {
+                let possibleBuys = 0;
+                let tempCooldown = rollCooldown;
+                for (let i = 0; i < buyMultiplier; i++) {
+                    if (tempCooldown <= MIN_COOLDOWN) break;
+                    possibleBuys++;
+                    tempCooldown -= 300;
+                }
+                const speedDetails = getBulkCostDetails(speedUpgradeCost, 2.0, possibleBuys);
+                speedDesc.innerText = `-${(0.3 * possibleBuys).toFixed(1)}s Cooldown (Price: ${formatNumber(speedDetails.totalCost)})`;
+                speedBtn.innerText = `${formatNumber(speedDetails.totalCost)} 🪙`;
+                speedBtn.disabled = userCoins < speedDetails.totalCost;
+            }
+
+            const autoBtn = document.getElementById("buyAutoRollBtn");
+            if (isAutoRollUnlocked) {
+                document.getElementById("autoRollDesc").innerText = "UNLOCKED";
+                autoBtn.innerText = "OWNED";
+                autoBtn.disabled = true;
+            } else {
+                autoBtn.disabled = userCoins < 1500;
+            }
+        }
+
+        function updateUI() {
+            document.getElementById("coinDisplay").innerText = formatNumber(userCoins);
+            updateStatsDisplay();
+            updateWorldUI();
+        }
+
+        function handleRoll() {
+            if (isRolling || !isWorldUnlocked(currentWorldIndex)) return;
+
+            isRolling = true;
+            const rollBtn = document.getElementById("rollBtn");
+            rollBtn.disabled = true;
+
+            const displayCard = document.getElementById("displayCard");
+            const resultTier = document.getElementById("resultTier");
+            const resultName = document.getElementById("resultName");
+            const resultOdds = document.getElementById("resultOdds");
+            const coinsEarned = document.getElementById("coinsEarned");
+
+            displayCard.className = "display-card rolling";
+            coinsEarned.innerText = "";
+
+            let ticks = 0;
+            const tickInterval = setInterval(() => {
+                ticks++;
+                playTickSound();
+                const world = WORLDS[currentWorldIndex];
+                const randomItem = world.rarityList[Math.floor(Math.random() * world.rarityList.length)];
+                resultName.innerText = randomItem.name;
+                resultName.style.color = getTierColor(randomItem.tier);
+
+                if (ticks >= 8) {
+                    clearInterval(tickInterval);
+                    
+                    const rolledItem = rollRarity();
+                    const earned = Math.floor(rolledItem.coinReward * coinMultiplier);
+                    userCoins += earned;
+
+                    const key = `w${WORLDS[currentWorldIndex].id}_t${rolledItem.tier}`;
+                    inventory[key] = (inventory[key] || 0) + 1;
+
+                    resultTier.innerText = `TIER ${rolledItem.tier} / 50`;
+                    resultName.innerText = rolledItem.name;
+                    resultName.style.color = getTierColor(rolledItem.tier);
+                    resultOdds.innerText = `1 in ${formatNumber(rolledItem.oneInX)} (${rolledItem.chance.toFixed(4)}%)`;
+                    coinsEarned.innerText = `+${formatNumber(earned)} 🪙`;
+
+                    displayCard.className = "display-card";
+                    if (rolledItem.tier >= 15) {
+                        displayCard.classList.add("rare-pop");
+                    }
+
+                    playWinSound(rolledItem.tier);
+                    updateUI();
+
+                    setTimeout(() => {
+                        isRolling = false;
+                        if (!isAutoRolling && isWorldUnlocked(currentWorldIndex)) {
+                            rollBtn.disabled = false;
+                        }
+                    }, rollCooldown);
+                }
+            }, 50);
+        }
+
+        function toggleAutoRoll() {
+            if (!isAutoRollUnlocked) return;
+
+            isAutoRolling = !isAutoRolling;
+            const autoBtn = document.getElementById("autoBtn");
+
+            if (isAutoRolling) {
+                autoBtn.classList.add("active");
+                autoBtn.innerText = "AUTO: ON";
+                autoRollLoop();
+            } else {
+                autoBtn.classList.remove("active");
+                autoBtn.innerText = "AUTO: OFF";
+            }
+        }
+
+        function autoRollLoop() {
+            if (!isAutoRolling) return;
+
+            if (!isRolling && isWorldUnlocked(currentWorldIndex)) {
+                handleRoll();
+            }
+
+            setTimeout(autoRollLoop, 200);
+        }
+
+        function renderInventory() {
+            const world = WORLDS[currentWorldIndex];
+            const container = document.getElementById("inventoryContainer");
+            container.innerHTML = "";
+
+            world.rarityList.forEach(item => {
+                const key = `w${world.id}_t${item.tier}`;
+                const count = inventory[key] || 0;
+                const card = document.createElement("div");
+
+                if (count > 0) {
+                    card.className = "inventory-card unlocked";
+                    card.style.setProperty('--tier-color', getTierColor(item.tier));
+                    card.innerHTML = `
+                        <div style="display:flex; flex-direction:column;">
+                            <span class="inv-name" style="color: ${getTierColor(item.tier)}">T${item.tier}. ${item.name}</span>
+                            <span style="font-size: 0.7rem; color: #888;">1 in ${formatNumber(item.oneInX)}</span>
+                        </div>
+                        <span class="inv-count">x${formatNumber(count)}</span>
+                    `;
+                } else {
+                    card.className = "inventory-card locked";
+                    card.innerHTML = `
+                        <div style="display:flex; flex-direction:column;">
+                            <span class="inv-name" style="color: #666;">T${item.tier}. ???</span>
+                            <span style="font-size: 0.7rem; color: #555;">1 in ${formatNumber(item.oneInX)}</span>
+                        </div>
+                        <span class="inv-count" style="color: #555;">x0</span>
+                    `;
+                }
+
+                container.appendChild(card);
+            });
+        }
+
+        // Initial setup
+        updateUI();
+    </script>
+</body></html>
