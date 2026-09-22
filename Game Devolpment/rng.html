@@ -1,0 +1,1601 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rarity Hunter - RNG Game</title>
+    <style>
+        :root {
+            --bg-color: #0f172a;
+            --card-bg: #1e293b;
+            --text-color: #f8fafc;
+            --accent-color: #6366f1;
+            --rebirth-color: #ec4899;
+            --garden-color: #22c55e;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        h1 { margin-bottom: 5px; color: #818cf8; }
+
+        .stats-bar {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 15px;
+            font-size: 1rem;
+            background: var(--card-bg);
+            padding: 10px 20px;
+            border-radius: 8px;
+            border: 1px solid #334155;
+        }
+
+        .stat-highlight { color: #f59e0b; font-weight: bold; }
+        .rebirth-highlight { color: var(--rebirth-color); font-weight: bold; }
+
+        /* Navigation Tabs */
+        .nav-tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            width: 100%;
+            max-width: 650px;
+        }
+
+        .tab-btn {
+            flex: 1;
+            padding: 10px;
+            background: #334155;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            text-align: center;
+            transition: background-color 0.2s;
+        }
+
+        .tab-btn.active { background: var(--accent-color); }
+        .tab-btn.rebirth-tab-btn.active { background: var(--rebirth-color); }
+        .tab-btn.garden-tab-btn.active { background: var(--garden-color); }
+
+        .tab-content {
+            display: none;
+            width: 100%;
+            max-width: 650px;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .tab-content.active { display: flex; }
+
+        .roll-display {
+            width: 100%;
+            height: 180px;
+            background-color: var(--card-bg);
+            border: 2px solid #334155;
+            border-radius: 12px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
+            box-sizing: border-box;
+        }
+
+        .cooldown-bar {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            height: 6px;
+            width: 0%;
+            background-color: #6366f1;
+            transition: width 0.05s linear;
+        }
+
+        .item-name {
+            font-size: 2rem;
+            font-weight: bold;
+            margin-bottom: 4px;
+            text-align: center;
+        }
+
+        .item-chance { font-size: 0.9rem; opacity: 0.8; }
+        .item-value { font-size: 1rem; color: #f59e0b; font-weight: bold; margin-top: 4px; }
+
+        .controls { display: flex; gap: 10px; }
+
+        button {
+            background-color: var(--accent-color);
+            color: white;
+            border: none;
+            padding: 12px 18px;
+            font-size: 0.95rem;
+            font-weight: bold;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: transform 0.1s, background-color 0.2s;
+        }
+
+        button:hover { background-color: #4f46e5; }
+        button:active { transform: scale(0.98); }
+        button:disabled { background-color: #475569; cursor: not-allowed; opacity: 0.6; }
+
+        .auto-btn-active { background-color: #ef4444 !important; }
+        .rebirth-btn { background-color: var(--rebirth-color) !important; }
+        .rebirth-btn:hover { background-color: #db2777 !important; }
+        .garden-btn { background-color: var(--garden-color) !important; }
+        .garden-btn:hover { background-color: #16a34a !important; }
+
+        .game-section {
+            width: 100%;
+            background: var(--card-bg);
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
+            box-sizing: border-box;
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #334155;
+            padding-bottom: 5px;
+            margin-bottom: 15px;
+        }
+
+        .section-title { margin: 0; font-size: 1.2rem; }
+
+        .bulk-container { display: flex; gap: 5px; align-items: center; }
+        .bulk-btn {
+            padding: 4px 8px;
+            font-size: 0.75rem;
+            background: #334155;
+            border-radius: 4px;
+        }
+        .bulk-btn.active { background: #6366f1; }
+
+        .shop-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 10px;
+        }
+
+        .shop-card {
+            background: #0f172a;
+            padding: 12px;
+            border-radius: 8px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            align-items: center;
+            border: 1px solid #334155;
+            text-align: center;
+        }
+
+        .shop-card.active-zone { border-color: #818cf8; background: #1e1b4b; }
+        .shop-card.rebirth-card { border-color: var(--rebirth-color); background: #2d122d; }
+        .shop-card.garden-card { border-color: var(--garden-color); background: #062c19; }
+
+        .shop-card button {
+            width: 100%;
+            margin-top: 10px;
+            padding: 8px;
+            font-size: 0.85rem;
+        }
+
+        .inventory-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+            gap: 10px;
+            max-height: 240px;
+            overflow-y: auto;
+            padding-right: 5px;
+        }
+
+        .garden-plots-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+            gap: 10px;
+        }
+
+        .plot-card {
+            background: #0f172a;
+            padding: 10px;
+            border-radius: 8px;
+            border: 1px dashed #334155;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: space-between;
+            min-height: 100px;
+            text-align: center;
+        }
+
+        .plot-card.growing { border-style: solid; border-color: #eab308; }
+        .plot-card.ready { border-style: solid; border-color: var(--garden-color); background: #062c19; }
+
+        .inv-item {
+            background: #0f172a;
+            padding: 10px;
+            border-radius: 6px;
+            border-left: 4px solid #fff;
+            font-size: 0.85rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .inv-item-name { font-weight: bold; }
+
+        .feed-select {
+            background: #1e293b;
+            color: #fff;
+            border: 1px solid #334155;
+            border-radius: 4px;
+            padding: 4px;
+            font-size: 0.75rem;
+            margin-top: 5px;
+            width: 100%;
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 4px;
+            margin-top: 6px;
+            flex-wrap: wrap;
+        }
+
+        .btn-group button {
+            flex: 1;
+            padding: 4px 6px;
+            font-size: 0.7rem;
+            white-space: nowrap;
+        }
+
+        .sell-btn { background-color: #10b981; }
+        .sell-btn:hover { background-color: #059669; }
+        .feed-btn { background-color: #f59e0b; }
+        .feed-btn:hover { background-color: #d97706; }
+
+        /* Tier Colors */
+        .common { color: #9ca3af; border-color: #9ca3af; }
+        .uncommon { color: #22c55e; border-color: #22c55e; }
+        .rare { color: #3b82f6; border-color: #3b82f6; }
+        .epic { color: #a855f7; border-color: #a855f7; }
+        .legendary { color: #eab308; border-color: #eab308; }
+        .mythic { color: #ef4444; border-color: #ef4444; }
+    </style>
+</head>
+<body>
+
+    <h1>Rarity Hunter</h1>
+   
+    <div class="stats-bar">
+        <div>Rolls: <span id="roll-count">0</span></div>
+        <div>Coins: <span id="coins-count" class="stat-highlight">0</span> 🪙</div>
+        <div>Luck: <span id="luck-count" class="stat-highlight">1.0x</span> 🍀</div>
+        <div>Coin Mult: <span id="coin-mult-count" class="stat-highlight">1.0x</span> 💰</div>
+        <div>Rebirth Tokens: <span id="rebirth-count" class="rebirth-highlight">0</span> 💎</div>
+    </div>
+
+    <!-- Navigation Tabs -->
+    <div class="nav-tabs">
+        <button class="tab-btn active" onclick="switchTab('main-tab', this)">Main Game</button>
+        <button class="tab-btn garden-tab-btn" onclick="switchTab('garden-tab', this)">Garden 🌱</button>
+        <button class="tab-btn rebirth-tab-btn" onclick="switchTab('rebirth-tab', this)">Rebirth Shop 💎</button>
+    </div>
+
+    <!-- MAIN TAB CONTENT -->
+    <div id="main-tab" class="tab-content active">
+        <!-- Roll Box -->
+        <div class="roll-display" id="display">
+            <div class="item-name common" id="item-name">Ready?</div>
+            <div class="item-chance" id="item-chance">Click Roll to start</div>
+            <div class="item-value" id="item-value"></div>
+            <div class="cooldown-bar" id="cooldown-bar"></div>
+        </div>
+
+        <div class="controls">
+            <button id="roll-btn" onclick="roll()">Roll RNG</button>
+            <button id="auto-btn" onclick="toggleAutoRoll()">Auto Roll: OFF</button>
+            <button onclick="resetData()" style="background-color: #dc2626;">Reset</button>
+        </div>
+
+        <!-- Standard Upgrades Section -->
+        <div class="game-section">
+            <div class="section-header">
+                <h3 class="section-title">Standard Upgrades</h3>
+                <div class="bulk-container">
+                    <span style="font-size: 0.8rem; opacity: 0.8;">Buy Amount:</span>
+                    <button class="bulk-btn active" onclick="setBuyAmount(1, this)">x1</button>
+                    <button class="bulk-btn" onclick="setBuyAmount(5, this)">x5</button>
+                    <button class="bulk-btn" onclick="setBuyAmount(10, this)">x10</button>
+                    <button class="bulk-btn" onclick="setBuyAmount(25, this)">x25</button>
+                    <button class="bulk-btn" onclick="setBuyAmount(100, this)">x100</button>
+                </div>
+            </div>
+            <div class="shop-grid">
+                <div class="shop-card">
+                    <div>
+                        <strong>Luck Level <span id="luck-level">0</span></strong>
+                        <div style="font-size: 0.8rem; opacity: 0.8;">+0.2x Base Luck / Lvl</div>
+                    </div>
+                    <button id="luck-upgrade-btn" onclick="buyLuckUpgrade()">Upgrade</button>
+                </div>
+                <div class="shop-card">
+                    <div>
+                        <strong>Coin Level <span id="coin-level">0</span></strong>
+                        <div style="font-size: 0.8rem; opacity: 0.8;">+0.25x Coin Gain / Lvl</div>
+                    </div>
+                    <button id="coin-upgrade-btn" onclick="buyCoinUpgrade()">Upgrade</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Biomes / Zones Section -->
+        <div class="game-section">
+            <div class="section-header">
+                <h3 class="section-title">Zones & Biomes</h3>
+            </div>
+            <div class="shop-grid" id="zones-grid"></div>
+        </div>
+
+        <!-- Gear & Crafting Section -->
+        <div class="game-section">
+            <div class="section-header">
+                <h3 class="section-title">Crafting Bench (<span id="crafting-zone-name">Grassy Plains</span>)</h3>
+            </div>
+            <div class="shop-grid" id="crafting-grid"></div>
+            <h4 style="margin-top: 15px; margin-bottom: 10px;">Equipped Gear (Max 2: 1 Ring, 1 Amulet)</h4>
+            <div class="inventory-grid" id="equipped-gear-grid"></div>
+        </div>
+
+        <!-- Egg Hatching Section -->
+        <div class="game-section">
+            <div class="section-header">
+                <h3 class="section-title">Pet Eggs (<span id="egg-zone-name">Grassy Plains</span>)</h3>
+            </div>
+            <div class="shop-grid" id="egg-grid"></div>
+        </div>
+
+        <!-- Hatched Pets Section -->
+        <div class="game-section">
+            <div class="section-header">
+                <h3 class="section-title">Pets (<span id="pet-count">0</span>/<span id="max-pets-text">3</span>)</h3>
+            </div>
+            <div class="inventory-grid" id="pets-inventory"></div>
+        </div>
+
+        <!-- Item Inventory Section -->
+        <div class="game-section">
+            <div class="section-header">
+                <h3 class="section-title">Item Inventory</h3>
+                <div style="display:flex; gap:6px;">
+                    <button class="sell-btn" onclick="sellAllCommons()" style="margin: 0; padding: 6px 10px; font-size: 0.75rem;">Sell Common/Uncommon</button>
+                    <button class="sell-btn" onclick="sellAllMaterials()" style="margin: 0; padding: 6px 10px; font-size: 0.75rem; background-color: #059669;">Sell All Materials</button>
+                </div>
+            </div>
+            <div class="inventory-grid" id="inventory"></div>
+        </div>
+    </div>
+
+    <!-- GARDEN TAB CONTENT -->
+    <div id="garden-tab" class="tab-content">
+        <div class="game-section" style="border: 1px solid var(--garden-color);">
+            <div class="section-header">
+                <h3 class="section-title" style="color: var(--garden-color);">Garden Plots</h3>
+                <button class="garden-btn" onclick="harvestAllPlots()" style="padding: 6px 12px; font-size: 0.8rem;">Harvest All</button>
+            </div>
+            <div class="garden-plots-grid" id="garden-plots"></div>
+        </div>
+
+        <div class="game-section">
+            <div class="section-header">
+                <h3 class="section-title" style="color: var(--garden-color);">Seed Shop</h3>
+            </div>
+            <div class="shop-grid" id="seed-shop-grid"></div>
+        </div>
+
+        <div class="game-section">
+            <div class="section-header">
+                <h3 class="section-title" style="color: var(--garden-color);">Garden Upgrades (Coins)</h3>
+            </div>
+            <div class="shop-grid">
+                <div class="shop-card garden-card">
+                    <div>
+                        <strong>Extra Plot</strong>
+                        <div style="font-size: 0.8rem; opacity: 0.8; margin-top: 4px;">Plots: <span id="plots-count-text">3</span></div>
+                        <div style="font-size: 0.75rem; color: #f59e0b; margin-top: 2px;">+1 Planting Plot</div>
+                    </div>
+                    <button class="garden-btn" id="buy-plot-btn" onclick="buyPlot()">Buy Plot</button>
+                </div>
+                <div class="shop-card garden-card">
+                    <div>
+                        <strong>Crop Growth Speed</strong>
+                        <div style="font-size: 0.8rem; opacity: 0.8; margin-top: 4px;">Level: <span id="growth-speed-lvl">0</span></div>
+                        <div style="font-size: 0.75rem; color: #f59e0b; margin-top: 2px;">-10% Grow Time / Lvl</div>
+                    </div>
+                    <button class="garden-btn" id="buy-growth-btn" onclick="buyGrowthSpeed()">Upgrade</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="game-section">
+            <div class="section-header">
+                <h3 class="section-title" style="color: var(--garden-color);">Plant Seeds Inventory</h3>
+            </div>
+            <div class="inventory-grid" id="seed-inventory"></div>
+        </div>
+
+        <div class="game-section">
+            <div class="section-header">
+                <h3 class="section-title" style="color: var(--garden-color);">Harvested Crop Storage</h3>
+                <button class="sell-btn" onclick="sellAllCrops()" style="padding: 6px 12px; font-size: 0.8rem;">Sell All Crops</button>
+            </div>
+            <div class="inventory-grid" id="crop-inventory"></div>
+        </div>
+    </div>
+
+    <!-- REBIRTH TAB CONTENT -->
+    <div id="rebirth-tab" class="tab-content">
+        <div class="game-section" style="border: 1px solid var(--rebirth-color);">
+            <div class="section-header">
+                <h3 class="section-title" style="color: var(--rebirth-color);">Rebirth Altar</h3>
+            </div>
+            <div style="text-align: center;">
+                <p style="font-size: 0.9rem; opacity: 0.9; margin-top: 0;">
+                    Reset Coins, Standard Upgrades, Inventory, Pets, and Gear in exchange for <strong>Rebirth Tokens</strong>.
+                    Tokens grant passive multipliers and can be spent on <strong>Permanent Upgrades</strong> below!
+                </p>
+                <button class="rebirth-btn" id="rebirth-action-btn" onclick="performRebirth()">
+                    Rebirth (Cost: 1,000 Coins)
+                </button>
+            </div>
+        </div>
+
+        <div class="game-section">
+            <div class="section-header">
+                <h3 class="section-title" style="color: var(--rebirth-color);">Permanent Rebirth Upgrades</h3>
+            </div>
+            <div class="shop-grid">
+                <div class="shop-card rebirth-card">
+                    <div>
+                        <strong>Perm Luck Multiplier</strong>
+                        <div style="font-size: 0.8rem; opacity: 0.8; margin-top: 4px;">Level: <span id="perm-luck-lvl">0</span></div>
+                        <div style="font-size: 0.75rem; color: #f59e0b; margin-top: 2px;">+25% Total Luck / Lvl</div>
+                    </div>
+                    <button class="rebirth-btn" id="perm-luck-btn" onclick="buyPermLuck()">Buy (1 Token)</button>
+                </div>
+
+                <div class="shop-card rebirth-card">
+                    <div>
+                        <strong>Perm Coin Multiplier</strong>
+                        <div style="font-size: 0.8rem; opacity: 0.8; margin-top: 4px;">Level: <span id="perm-coin-lvl">0</span></div>
+                        <div style="font-size: 0.75rem; color: #f59e0b; margin-top: 2px;">+25% Coin Gain / Lvl</div>
+                    </div>
+                    <button class="rebirth-btn" id="perm-coin-btn" onclick="buyPermCoin()">Buy (1 Token)</button>
+                </div>
+
+                <div class="shop-card rebirth-card">
+                    <div>
+                        <strong>Fast Roll Speed</strong>
+                        <div style="font-size: 0.8rem; opacity: 0.8; margin-top: 4px;">Level: <span id="perm-speed-lvl">0</span> / 10</div>
+                        <div style="font-size: 0.75rem; color: #f59e0b; margin-top: 2px;">-50ms Roll Cooldown / Lvl</div>
+                    </div>
+                    <button class="rebirth-btn" id="perm-speed-btn" onclick="buyPermSpeed()">Buy (2 Tokens)</button>
+                </div>
+
+                <div class="shop-card rebirth-card">
+                    <div>
+                        <strong>Extra Pet Slots</strong>
+                        <div style="font-size: 0.8rem; opacity: 0.8; margin-top: 4px;">Level: <span id="perm-pets-lvl">0</span> / 3</div>
+                        <div style="font-size: 0.75rem; color: #f59e0b; margin-top: 2px;">+1 Equippable Pet / Lvl</div>
+                    </div>
+                    <button class="rebirth-btn" id="perm-pets-btn" onclick="buyPermPets()">Buy (5 Tokens)</button>
+                </div>
+
+                <div class="shop-card rebirth-card">
+                    <div>
+                        <strong>Fertile Soil (Rebirth)</strong>
+                        <div style="font-size: 0.8rem; opacity: 0.8; margin-top: 4px;">Level: <span id="perm-crop-yield-lvl">0</span></div>
+                        <div style="font-size: 0.75rem; color: #f59e0b; margin-top: 2px;">+50% Crop Yield / Lvl</div>
+                    </div>
+                    <button class="rebirth-btn" id="perm-crop-yield-btn" onclick="buyPermCropYield()">Buy (3 Tokens)</button>
+                </div>
+
+                <div class="shop-card rebirth-card">
+                    <div>
+                        <strong>Green Thumb (Rebirth)</strong>
+                        <div style="font-size: 0.8rem; opacity: 0.8; margin-top: 4px;">Level: <span id="perm-crop-val-lvl">0</span></div>
+                        <div style="font-size: 0.75rem; color: #f59e0b; margin-top: 2px;">+50% Crop Value / Lvl</div>
+                    </div>
+                    <button class="rebirth-btn" id="perm-crop-val-btn" onclick="buyPermCropVal()">Buy (3 Tokens)</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const tierBaseValues = {
+            common: 15,
+            uncommon: 50,
+            rare: 200,
+            epic: 1000,
+            legendary: 5000,
+            mythic: 25000
+        };
+
+        const cropTypes = [
+            { id: "carrot", name: "Carrot", seedCost: 10, growTime: 5, sellValue: 20, expValue: 10 },
+            { id: "corn", name: "Corn", seedCost: 50, growTime: 12, sellValue: 110, expValue: 25 },
+            { id: "tomato", name: "Tomato", seedCost: 200, growTime: 25, sellValue: 480, expValue: 60 },
+            { id: "golden_apple", name: "Golden Apple", seedCost: 1000, growTime: 60, sellValue: 2600, expValue: 200 },
+            { id: "crystal_berry", name: "Crystal Berry", seedCost: 5000, growTime: 120, sellValue: 14000, expValue: 600 }
+        ];
+
+        const zones = {
+            grassy_plains: {
+                id: "grassy_plains",
+                name: "Grassy Plains",
+                unlockCost: 0,
+                pool: [
+                    { name: "Dirt", chance: 1/2, class: "common", value: 1 },
+                    { name: "Pebble", chance: 1/4, class: "common", value: 2 },
+                    { name: "Wood Stick", chance: 1/10, class: "uncommon", value: 5 },
+                    { name: "Iron Ore", chance: 1/25, class: "uncommon", value: 12 },
+                    { name: "Silver Coin", chance: 1/50, class: "rare", value: 25 },
+                    { name: "Gold Ingot", chance: 1/100, class: "rare", value: 50 },
+                    { name: "Diamond", chance: 1/500, class: "epic", value: 200 },
+                    { name: "Dark Matter", chance: 1/1000, class: "epic", value: 500 },
+                    { name: "Phoenix Feather", chance: 1/5000, class: "legendary", value: 2000 },
+                    { name: "Dragon Eye", chance: 1/25000, class: "legendary", value: 10000 },
+                    { name: "Celestial Crown", chance: 1/100000, class: "mythic", value: 50000 }
+                ],
+                eggs: [
+                    {
+                        id: "gp_egg_1",
+                        name: "Meadow Egg",
+                        cost: 25,
+                        pets: [
+                            { name: "Grass Beetle", luckBonus: 0.1, class: "common" },
+                            { name: "Prairie Bunny", luckBonus: 0.2, class: "common" },
+                            { name: "Meadow Fox", luckBonus: 0.4, class: "uncommon" }
+                        ]
+                    },
+                    {
+                        id: "gp_egg_2",
+                        name: "Forest Egg",
+                        cost: 100,
+                        pets: [
+                            { name: "Forest Owl", luckBonus: 0.6, class: "uncommon" },
+                            { name: "Woodland Bear", luckBonus: 1.0, class: "rare" },
+                            { name: "Golden Stag", luckBonus: 1.5, class: "rare" }
+                        ]
+                    },
+                    {
+                        id: "gp_egg_3",
+                        name: "Ancient Plains Egg",
+                        cost: 500,
+                        pets: [
+                            { name: "Emerald Toad", luckBonus: 2.0, class: "rare" },
+                            { name: "Mossy Golem", luckBonus: 3.5, class: "epic" },
+                            { name: "Celestial Falcon", luckBonus: 6.0, class: "legendary" }
+                        ]
+                    }
+                ],
+                gears: [
+                    { id: "gp_wood_ring", slot: "ring", name: "Wooden Ring", luckBonus: 0.2, class: "common", reqs: { "Pebble": 10, "Wood Stick": 3 } },
+                    { id: "gp_iron_amulet", slot: "amulet", name: "Iron Amulet", luckBonus: 0.5, class: "uncommon", reqs: { "Iron Ore": 5, "Wood Stick": 5 } },
+                    { id: "gp_gold_band", slot: "ring", name: "Gold Band", luckBonus: 1.0, class: "rare", reqs: { "Silver Coin": 3, "Gold Ingot": 2 } },
+                    { id: "gp_phoenix_pendant", slot: "amulet", name: "Phoenix Pendant", luckBonus: 2.5, class: "legendary", reqs: { "Diamond": 2, "Phoenix Feather": 1 } }
+                ]
+            },
+            volcanic_cave: {
+                id: "volcanic_cave",
+                name: "Volcanic Cave",
+                unlockCost: 250,
+                pool: [
+                    { name: "Ash", chance: 1/2, class: "common", value: 5 },
+                    { name: "Basalt", chance: 1/4, class: "common", value: 10 },
+                    { name: "Obsidian Shard", chance: 1/10, class: "uncommon", value: 25 },
+                    { name: "Magma Stone", chance: 1/30, class: "uncommon", value: 60 },
+                    { name: "Fiery Gem", chance: 1/80, class: "rare", value: 150 },
+                    { name: "Hellfire Core", chance: 1/300, class: "epic", value: 800 },
+                    { name: "Molten Heart", chance: 1/2000, class: "legendary", value: 5000 },
+                    { name: "Infernal Blade", chance: 1/40000, class: "mythic", value: 100000 }
+                ],
+                eggs: [
+                    {
+                        id: "vc_egg_1",
+                        name: "Cinder Egg",
+                        cost: 250,
+                        pets: [
+                            { name: "Ash Slug", luckBonus: 0.5, class: "common" },
+                            { name: "Lava Salamander", luckBonus: 1.0, class: "uncommon" },
+                            { name: "Magma Hound", luckBonus: 1.8, class: "uncommon" }
+                        ]
+                    },
+                    {
+                        id: "vc_egg_2",
+                        name: "Magma Egg",
+                        cost: 1000,
+                        pets: [
+                            { name: "Fire Wyrm", luckBonus: 2.5, class: "rare" },
+                            { name: "Cinder Drake", luckBonus: 4.0, class: "rare" },
+                            { name: "Blaze Bat", luckBonus: 6.5, class: "epic" }
+                        ]
+                    },
+                    {
+                        id: "vc_egg_3",
+                        name: "Infernal Egg",
+                        cost: 5000,
+                        pets: [
+                            { name: "Pyro Phoenix", luckBonus: 8.0, class: "epic" },
+                            { name: "Magma Behemoth", luckBonus: 12.0, class: "epic" },
+                            { name: "Obsidian Dragon", luckBonus: 20.0, class: "legendary" }
+                        ]
+                    }
+                ],
+                gears: [
+                    { id: "vc_ash_talisman", slot: "amulet", name: "Ashen Talisman", luckBonus: 1.0, class: "common", reqs: { "Ash": 25, "Basalt": 10 } },
+                    { id: "vc_obsidian_ring", slot: "ring", name: "Obsidian Band", luckBonus: 2.0, class: "uncommon", reqs: { "Obsidian Shard": 8, "Basalt": 15 } },
+                    { id: "vc_fiery_brooch", slot: "amulet", name: "Fiery Brooch", luckBonus: 4.5, class: "rare", reqs: { "Magma Stone": 5, "Fiery Gem": 2 } },
+                    { id: "vc_infernal_crest", slot: "ring", name: "Infernal Ring", luckBonus: 10.0, class: "mythic", reqs: { "Hellfire Core": 3, "Molten Heart": 1 } }
+                ]
+            },
+            ocean_trench: {
+                id: "ocean_trench",
+                name: "Ocean Trench",
+                unlockCost: 1200,
+                pool: [
+                    { name: "Seashell", chance: 1/2, class: "common", value: 15 },
+                    { name: "Coral Branch", chance: 1/4, class: "common", value: 30 },
+                    { name: "Deep Sea Pearl", chance: 1/12, class: "uncommon", value: 75 },
+                    { name: "Sunken Coin", chance: 1/35, class: "uncommon", value: 180 },
+                    { name: "Abyssal Kelp", chance: 1/100, class: "rare", value: 450 },
+                    { name: "Triton Trident", chance: 1/400, class: "epic", value: 2500 },
+                    { name: "Kraken Tooth", chance: 1/2500, class: "legendary", value: 12000 },
+                    { name: "Poseidon Tear", chance: 1/60000, class: "mythic", value: 200000 }
+                ],
+                eggs: [
+                    {
+                        id: "ot_egg_1",
+                        name: "Tide Egg",
+                        cost: 1200,
+                        pets: [
+                            { name: "Sea Snail", luckBonus: 1.2, class: "common" },
+                            { name: "Coral Crab", luckBonus: 2.0, class: "uncommon" },
+                            { name: "Lantern Fish", luckBonus: 3.5, class: "uncommon" }
+                        ]
+                    },
+                    {
+                        id: "ot_egg_2",
+                        name: "Abyssal Egg",
+                        cost: 5000,
+                        pets: [
+                            { name: "Reef Shark", luckBonus: 5.0, class: "rare" },
+                            { name: "Deep Octopus", luckBonus: 8.5, class: "rare" },
+                            { name: "Tide Leviathan", luckBonus: 14.0, class: "epic" }
+                        ]
+                    },
+                    {
+                        id: "ot_egg_3",
+                        name: "Oceanic Egg",
+                        cost: 20000,
+                        pets: [
+                            { name: "Siren Spirit", luckBonus: 18.0, class: "epic" },
+                            { name: "Depth Serpent", luckBonus: 28.0, class: "legendary" },
+                            { name: "Abyssal Kraken", luckBonus: 45.0, class: "mythic" }
+                        ]
+                    }
+                ],
+                gears: [
+                    { id: "ot_shell_ring", slot: "ring", name: "Shell Ring", luckBonus: 2.5, class: "common", reqs: { "Seashell": 30, "Coral Branch": 10 } },
+                    { id: "ot_pearl_amulet", slot: "amulet", name: "Pearl Amulet", luckBonus: 5.0, class: "uncommon", reqs: { "Deep Sea Pearl": 5, "Coral Branch": 15 } },
+                    { id: "ot_abyssal_band", slot: "ring", name: "Abyssal Band", luckBonus: 12.0, class: "rare", reqs: { "Sunken Coin": 5, "Abyssal Kelp": 2 } },
+                    { id: "ot_kraken_pendant", slot: "amulet", name: "Kraken Pendant", luckBonus: 25.0, class: "legendary", reqs: { "Triton Trident": 2, "Kraken Tooth": 1 } }
+                ]
+            },
+            cosmic_void: {
+                id: "cosmic_void",
+                name: "Cosmic Void",
+                unlockCost: 5000,
+                pool: [
+                    { name: "Stardust", chance: 1/2, class: "common", value: 40 },
+                    { name: "Meteor Chunk", chance: 1/5, class: "uncommon", value: 120 },
+                    { name: "Nebula Essence", chance: 1/20, class: "rare", value: 500 },
+                    { name: "Void Crystal", chance: 1/150, class: "epic", value: 3000 },
+                    { name: "Supernova Core", chance: 1/1000, class: "legendary", value: 15000 },
+                    { name: "Singularity", chance: 1/50000, class: "mythic", value: 300000 }
+                ],
+                eggs: [
+                    {
+                        id: "cv_egg_1",
+                        name: "Cosmic Egg",
+                        cost: 5000,
+                        pets: [
+                            { name: "Star Sprite", luckBonus: 5.0, class: "uncommon" },
+                            { name: "Comet Tail", luckBonus: 10.0, class: "rare" },
+                            { name: "Void Orb", luckBonus: 20.0, class: "epic" }
+                        ]
+                    }
+                ],
+                gears: [
+                    { id: "cv_star_band", slot: "ring", name: "Starlight Band", luckBonus: 15.0, class: "rare", reqs: { "Stardust": 50, "Nebula Essence": 3 } }
+                ]
+            }
+        };
+
+        // Game State Variables
+        let state = {
+            rolls: 0,
+            coins: 0,
+            luckLevel: 0,
+            coinLevel: 0,
+            currentZone: "grassy_plains",
+            unlockedZones: ["grassy_plains"],
+            inventory: {},
+            seeds: {},
+            crops: {},
+            plots: [
+                { plantId: null, startTime: null, duration: 0 },
+                { plantId: null, startTime: null, duration: 0 },
+                { plantId: null, startTime: null, duration: 0 }
+            ],
+            growthSpeedLevel: 0,
+            equippedGear: { ring: null, amulet: null },
+            pets: [],
+            rebirthTokens: 0,
+            permLuckLvl: 0,
+            permCoinLvl: 0,
+            permSpeedLvl: 0,
+            permPetsLvl: 0,
+            permCropYieldLvl: 0,
+            permCropValLvl: 0
+        };
+
+        let autoRollActive = false;
+        let rollCooldown = false;
+        let buyAmount = 1;
+
+        // Initialization
+        window.onload = function() {
+            loadGame();
+            renderAll();
+            setInterval(gameLoop, 200);
+        };
+
+        function setBuyAmount(amt, btn) {
+            buyAmount = amt;
+            document.querySelectorAll('.bulk-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            renderUpgrades();
+        }
+
+        function switchTab(tabId, btn) {
+            document.querySelectorAll('.tab-content').forEach(tc => tc.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(tb => tb.classList.remove('active'));
+            document.getElementById(tabId).classList.add('active');
+            btn.classList.add('active');
+        }
+
+        function getMaxPets() {
+            return 3 + state.permPetsLvl;
+        }
+
+        function getPetLuck(pet) {
+            let lvl = pet.level || 1;
+            let mult = 1 + ((lvl - 1) * 0.25); // +25% per pet level
+            return pet.baseLuckBonus * mult;
+        }
+
+        function getPetNextXp(pet) {
+            let lvl = pet.level || 1;
+            return Math.floor(50 * Math.pow(1.5, lvl - 1));
+        }
+
+        function getLuck() {
+            let baseLuck = 1.0 + (state.luckLevel * 0.2);
+            let gearLuck = 0;
+            if (state.equippedGear.ring) gearLuck += state.equippedGear.ring.luckBonus;
+            if (state.equippedGear.amulet) gearLuck += state.equippedGear.amulet.luckBonus;
+           
+            let petLuck = 0;
+            state.pets.forEach(p => { petLuck += getPetLuck(p); });
+
+            let totalBase = baseLuck + gearLuck + petLuck;
+            let rebirthMult = 1.0 + (state.permLuckLvl * 0.25);
+            return totalBase * rebirthMult;
+        }
+
+        function getCoinMult() {
+            let baseMult = 1.0 + (state.coinLevel * 0.25);
+            let rebirthMult = 1.0 + (state.permCoinLvl * 0.25);
+            return baseMult * rebirthMult;
+        }
+
+        function getCooldownTime() {
+            let base = 500;
+            let reduction = state.permSpeedLvl * 50;
+            return Math.max(100, base - reduction);
+        }
+
+        // Rolling Logic
+        function roll() {
+            if (rollCooldown) return;
+            rollCooldown = true;
+
+            let zone = zones[state.currentZone];
+            let currentLuck = getLuck();
+
+            let totalWeight = 0;
+            let adjustedPool = zone.pool.map(item => {
+                let weight = item.chance * (item.class === "common" ? 1 : currentLuck);
+                totalWeight += weight;
+                return { ...item, weight };
+            });
+
+            let rand = Math.random() * totalWeight;
+            let rolledItem = adjustedPool[0];
+
+            for (let item of adjustedPool) {
+                if (rand < item.weight) {
+                    rolledItem = item;
+                    break;
+                }
+                rand -= item.weight;
+            }
+
+            state.rolls++;
+
+            // Direct coin reward per roll
+            let coinBonus = Math.floor((tierBaseValues[rolledItem.class] || 10) * getCoinMult());
+            state.coins += coinBonus;
+
+            // Add item to Inventory
+            state.inventory[rolledItem.name] = (state.inventory[rolledItem.name] || 0) + 1;
+
+            // Display result
+            let display = document.getElementById("display");
+            let itemNameEl = document.getElementById("item-name");
+            let itemChanceEl = document.getElementById("item-chance");
+            let itemValEl = document.getElementById("item-value");
+           
+            itemNameEl.className = "item-name " + rolledItem.class;
+            itemNameEl.innerText = rolledItem.name;
+            itemChanceEl.innerText = `Rarity: 1 in ${Math.round(1 / rolledItem.chance)}`;
+            itemValEl.innerText = `+${coinBonus} 🪙 Coins`;
+
+            // Bar Animation
+            let cdBar = document.getElementById("cooldown-bar");
+            let cdTime = getCooldownTime();
+            cdBar.style.transition = "none";
+            cdBar.style.width = "0%";
+            setTimeout(() => {
+                cdBar.style.transition = `width ${cdTime}ms linear`;
+                cdBar.style.width = "100%";
+            }, 10);
+
+            setTimeout(() => {
+                rollCooldown = false;
+                if (autoRollActive) roll();
+            }, cdTime);
+
+            renderStats();
+            renderInventory();
+        }
+
+        function toggleAutoRoll() {
+            autoRollActive = !autoRollActive;
+            let btn = document.getElementById("auto-btn");
+            if (autoRollActive) {
+                btn.innerText = "Auto Roll: ON";
+                btn.classList.add("auto-btn-active");
+                if (!rollCooldown) roll();
+            } else {
+                btn.innerText = "Auto Roll: OFF";
+                btn.classList.remove("auto-btn-active");
+            }
+        }
+
+        // Upgrades Logic
+        function buyLuckUpgrade() {
+            let cost = Math.floor(15 * Math.pow(1.3, state.luckLevel));
+            for (let i = 0; i < buyAmount; i++) {
+                cost = Math.floor(15 * Math.pow(1.3, state.luckLevel));
+                if (state.coins >= cost) {
+                    state.coins -= cost;
+                    state.luckLevel++;
+                } else break;
+            }
+            renderAll();
+        }
+
+        function buyCoinUpgrade() {
+            let cost = Math.floor(15 * Math.pow(1.3, state.coinLevel));
+            for (let i = 0; i < buyAmount; i++) {
+                cost = Math.floor(15 * Math.pow(1.3, state.coinLevel));
+                if (state.coins >= cost) {
+                    state.coins -= cost;
+                    state.coinLevel++;
+                } else break;
+            }
+            renderAll();
+        }
+
+        // Crafting Gear Logic
+        function craftGear(gearId) {
+            let zone = zones[state.currentZone];
+            let gear = zone.gears ? zone.gears.find(g => g.id === gearId) : null;
+            if (!gear) return;
+
+            // Check requirements
+            for (let mat in gear.reqs) {
+                if ((state.inventory[mat] || 0) < gear.reqs[mat]) {
+                    alert(`Not enough ${mat}! Need ${gear.reqs[mat]}.`);
+                    return;
+                }
+            }
+
+            // Deduct requirements
+            for (let mat in gear.reqs) {
+                state.inventory[mat] -= gear.reqs[mat];
+            }
+
+            // Equip gear directly
+            state.equippedGear[gear.slot] = gear;
+            renderAll();
+        }
+
+        function unequipGear(slot) {
+            state.equippedGear[slot] = null;
+            renderAll();
+        }
+
+        // Egg Hatching Logic
+        function hatchEgg(eggId) {
+            let zone = zones[state.currentZone];
+            let egg = zone.eggs ? zone.eggs.find(e => e.id === eggId) : null;
+            if (!egg) return;
+
+            if (state.pets.length >= getMaxPets()) {
+                alert(`Pet inventory full! Max pets: ${getMaxPets()}`);
+                return;
+            }
+
+            if (state.coins < egg.cost) {
+                alert(`Not enough Coins! Need ${egg.cost} Coins.`);
+                return;
+            }
+
+            state.coins -= egg.cost;
+            let rolledPet = egg.pets[Math.floor(Math.random() * egg.pets.length)];
+
+            state.pets.push({
+                name: rolledPet.name,
+                baseLuckBonus: rolledPet.luckBonus,
+                class: rolledPet.class,
+                level: 1,
+                xp: 0
+            });
+
+            renderAll();
+        }
+
+        function feedPet(petIndex, cropId) {
+            let pet = state.pets[petIndex];
+            if (!pet) return;
+
+            if (!cropId || (state.crops[cropId] || 0) <= 0) {
+                alert("You don't have any of this crop to feed!");
+                return;
+            }
+
+            let crop = cropTypes.find(c => c.id === cropId);
+            state.crops[cropId]--;
+
+            pet.xp += crop.expValue;
+
+            // Leveling Check
+            while (pet.xp >= getPetNextXp(pet)) {
+                pet.xp -= getPetNextXp(pet);
+                pet.level++;
+            }
+
+            renderAll();
+        }
+
+        function releasePet(index) {
+            state.pets.splice(index, 1);
+            renderAll();
+        }
+
+        // Garden Mechanics
+        function buySeed(cropId) {
+            let crop = cropTypes.find(c => c.id === cropId);
+            if (state.coins >= crop.seedCost) {
+                state.coins -= crop.seedCost;
+                state.seeds[cropId] = (state.seeds[cropId] || 0) + 1;
+                renderAll();
+            }
+        }
+
+        function plantSeed(cropId) {
+            let emptyPlotIndex = state.plots.findIndex(p => p.plantId === null);
+            if (emptyPlotIndex === -1) {
+                alert("No empty garden plots available!");
+                return;
+            }
+
+            if ((state.seeds[cropId] || 0) > 0) {
+                state.seeds[cropId]--;
+                let crop = cropTypes.find(c => c.id === cropId);
+                let duration = crop.growTime * (1 - (state.growthSpeedLevel * 0.1));
+                duration = Math.max(1, duration);
+
+                state.plots[emptyPlotIndex] = {
+                    plantId: cropId,
+                    startTime: Date.now(),
+                    duration: duration
+                };
+                renderAll();
+            }
+        }
+
+        function harvestPlot(index) {
+            let plot = state.plots[index];
+            if (!plot.plantId) return;
+
+            let elapsed = (Date.now() - plot.startTime) / 1000;
+            if (elapsed >= plot.duration) {
+                let crop = cropTypes.find(c => c.id === plot.plantId);
+                let yieldBonus = 1 + (state.permCropYieldLvl * 0.5);
+                let amountGained = Math.floor(1 * yieldBonus);
+
+                state.crops[plot.plantId] = (state.crops[plot.plantId] || 0) + amountGained;
+                state.plots[index] = { plantId: null, startTime: null, duration: 0 };
+                renderAll();
+            }
+        }
+
+        function harvestAllPlots() {
+            for (let i = 0; i < state.plots.length; i++) {
+                harvestPlot(i);
+            }
+        }
+
+        function buyPlot() {
+            let cost = Math.floor(100 * Math.pow(2.5, state.plots.length - 3));
+            if (state.coins >= cost) {
+                state.coins -= cost;
+                state.plots.push({ plantId: null, startTime: null, duration: 0 });
+                renderAll();
+            }
+        }
+
+        function buyGrowthSpeed() {
+            let cost = Math.floor(200 * Math.pow(2, state.growthSpeedLevel));
+            if (state.coins >= cost) {
+                state.coins -= cost;
+                state.growthSpeedLevel++;
+                renderAll();
+            }
+        }
+
+        function sellAllCrops() {
+            let totalGain = 0;
+            let valMult = 1 + (state.permCropValLvl * 0.5);
+            for (let cropId in state.crops) {
+                let crop = cropTypes.find(c => c.id === cropId);
+                let amt = state.crops[cropId];
+                if (amt > 0) {
+                    totalGain += Math.floor(amt * crop.sellValue * valMult);
+                    state.crops[cropId] = 0;
+                }
+            }
+            state.coins += totalGain;
+            renderAll();
+        }
+
+        // Rebirth Shop
+        function performRebirth() {
+            let cost = 1000;
+            if (state.coins >= cost) {
+                state.coins = 0;
+                state.luckLevel = 0;
+                state.coinLevel = 0;
+                state.inventory = {};
+                state.equippedGear = { ring: null, amulet: null };
+                state.pets = [];
+                state.rebirthTokens += 1;
+                renderAll();
+            } else {
+                alert("You need at least 1,000 Coins to Rebirth!");
+            }
+        }
+
+        function buyPermLuck() {
+            if (state.rebirthTokens >= 1) {
+                state.rebirthTokens -= 1;
+                state.permLuckLvl++;
+                renderAll();
+            }
+        }
+
+        function buyPermCoin() {
+            if (state.rebirthTokens >= 1) {
+                state.rebirthTokens -= 1;
+                state.permCoinLvl++;
+                renderAll();
+            }
+        }
+
+        function buyPermSpeed() {
+            if (state.rebirthTokens >= 2 && state.permSpeedLvl < 10) {
+                state.rebirthTokens -= 2;
+                state.permSpeedLvl++;
+                renderAll();
+            }
+        }
+
+        function buyPermPets() {
+            if (state.rebirthTokens >= 5 && state.permPetsLvl < 3) {
+                state.rebirthTokens -= 5;
+                state.permPetsLvl++;
+                renderAll();
+            }
+        }
+
+        function buyPermCropYield() {
+            if (state.rebirthTokens >= 3) {
+                state.rebirthTokens -= 3;
+                state.permCropYieldLvl++;
+                renderAll();
+            }
+        }
+
+        function buyPermCropVal() {
+            if (state.rebirthTokens >= 3) {
+                state.rebirthTokens -= 3;
+                state.permCropValLvl++;
+                renderAll();
+            }
+        }
+
+        // Inventory Utilities
+        function sellAllCommons() {
+            let currentZonePool = zones[state.currentZone].pool;
+            let soldVal = 0;
+
+            for (let name in state.inventory) {
+                let match = currentZonePool.find(i => i.name === name);
+                if (match && (match.class === "common" || match.class === "uncommon")) {
+                    soldVal += state.inventory[name] * match.value;
+                    delete state.inventory[name];
+                }
+            }
+            state.coins += Math.floor(soldVal * getCoinMult());
+            renderAll();
+        }
+
+        function sellAllMaterials() {
+            let currentZonePool = zones[state.currentZone].pool;
+            let soldVal = 0;
+
+            for (let name in state.inventory) {
+                let match = currentZonePool.find(i => i.name === name);
+                if (match) {
+                    soldVal += state.inventory[name] * match.value;
+                    delete state.inventory[name];
+                }
+            }
+            state.coins += Math.floor(soldVal * getCoinMult());
+            renderAll();
+        }
+
+        // Game Loop / Timers
+        function gameLoop() {
+            renderPlots();
+        }
+
+        // Render Functions
+        function renderAll() {
+            renderStats();
+            renderUpgrades();
+            renderZones();
+            renderCrafting();
+            renderEggs();
+            renderPets();
+            renderInventory();
+            renderSeedShop();
+            renderSeedInventory();
+            renderCropInventory();
+            renderPlots();
+            renderRebirthShop();
+        }
+
+        function renderStats() {
+            document.getElementById("roll-count").innerText = state.rolls.toLocaleString();
+            document.getElementById("coins-count").innerText = state.coins.toLocaleString();
+            document.getElementById("luck-count").innerText = getLuck().toFixed(1) + "x";
+            document.getElementById("coin-mult-count").innerText = getCoinMult().toFixed(2) + "x";
+            document.getElementById("rebirth-count").innerText = state.rebirthTokens.toLocaleString();
+
+            document.getElementById("luck-level").innerText = state.luckLevel;
+            document.getElementById("coin-level").innerText = state.coinLevel;
+            document.getElementById("plots-count-text").innerText = state.plots.length;
+            document.getElementById("growth-speed-lvl").innerText = state.growthSpeedLevel;
+            document.getElementById("pet-count").innerText = state.pets.length;
+            document.getElementById("max-pets-text").innerText = getMaxPets();
+        }
+
+        function renderUpgrades() {
+            let luckCost = 0;
+            let tempLuck = state.luckLevel;
+            for (let i = 0; i < buyAmount; i++) {
+                luckCost += Math.floor(15 * Math.pow(1.3, tempLuck));
+                tempLuck++;
+            }
+            document.getElementById("luck-upgrade-btn").innerText = `Upgrade (${luckCost.toLocaleString()} C)`;
+
+            let coinCost = 0;
+            let tempCoin = state.coinLevel;
+            for (let i = 0; i < buyAmount; i++) {
+                coinCost += Math.floor(15 * Math.pow(1.3, tempCoin));
+                tempCoin++;
+            }
+            document.getElementById("coin-upgrade-btn").innerText = `Upgrade (${coinCost.toLocaleString()} C)`;
+
+            let plotCost = Math.floor(100 * Math.pow(2.5, state.plots.length - 3));
+            document.getElementById("buy-plot-btn").innerText = `Buy Plot (${plotCost.toLocaleString()} C)`;
+
+            let growthCost = Math.floor(200 * Math.pow(2, state.growthSpeedLevel));
+            document.getElementById("buy-growth-btn").innerText = `Upgrade (${growthCost.toLocaleString()} C)`;
+        }
+
+        function renderZones() {
+            let grid = document.getElementById("zones-grid");
+            grid.innerHTML = "";
+            for (let id in zones) {
+                let z = zones[id];
+                let isUnlocked = state.unlockedZones.includes(id);
+                let isActive = state.currentZone === id;
+
+                let card = document.createElement("div");
+                card.className = "shop-card" + (isActive ? " active-zone" : "");
+                card.innerHTML = `
+                    <div>
+                        <strong>${z.name}</strong>
+                        <div style="font-size:0.75rem; opacity:0.8;">${isUnlocked ? 'Unlocked' : 'Cost: ' + z.unlockCost + ' Coins'}</div>
+                    </div>
+                    <button onclick="selectZone('${id}')">${isActive ? 'Active' : (isUnlocked ? 'Select' : 'Unlock')}</button>
+                `;
+                grid.appendChild(card);
+            }
+        }
+
+        function selectZone(id) {
+            let z = zones[id];
+            if (state.unlockedZones.includes(id)) {
+                state.currentZone = id;
+            } else if (state.coins >= z.unlockCost) {
+                state.coins -= z.unlockCost;
+                state.unlockedZones.push(id);
+                state.currentZone = id;
+            }
+            renderAll();
+        }
+
+        function renderCrafting() {
+            let zone = zones[state.currentZone];
+            document.getElementById("crafting-zone-name").innerText = zone.name;
+
+            let grid = document.getElementById("crafting-grid");
+            grid.innerHTML = "";
+
+            if (zone.gears && zone.gears.length > 0) {
+                zone.gears.forEach(gear => {
+                    let reqText = Object.entries(gear.reqs).map(([mat, qty]) => `${qty} ${mat}`).join(", ");
+                    let card = document.createElement("div");
+                    card.className = "shop-card";
+                    card.innerHTML = `
+                        <div>
+                            <strong class="${gear.class}">${gear.name}</strong>
+                            <div style="font-size:0.75rem; margin-top:2px;">Slot: ${gear.slot.toUpperCase()} | +${gear.luckBonus}x Luck</div>
+                            <div style="font-size:0.7rem; opacity:0.7; margin-top:4px;">Req: ${reqText}</div>
+                        </div>
+                        <button onclick="craftGear('${gear.id}')">Craft & Equip</button>
+                    `;
+                    grid.appendChild(card);
+                });
+            } else {
+                grid.innerHTML = `<div style="font-size: 0.85rem; opacity: 0.6; grid-column: 1 / -1;">No gear recipes available in this biome yet.</div>`;
+            }
+
+            // Render Equipped Gear
+            let gearGrid = document.getElementById("equipped-gear-grid");
+            gearGrid.innerHTML = "";
+            ["ring", "amulet"].forEach(slot => {
+                let gear = state.equippedGear[slot];
+                let card = document.createElement("div");
+                card.className = "inv-item";
+                if (gear) {
+                    card.classList.add(gear.class);
+                    card.innerHTML = `
+                        <div>
+                            <div class="inv-item-name">${gear.name} (${slot.toUpperCase()})</div>
+                            <div style="font-size:0.75rem;">+${gear.luckBonus}x Luck</div>
+                        </div>
+                        <button class="sell-btn" style="background-color:#ef4444; margin-top:6px;" onclick="unequipGear('${slot}')">Unequip</button>
+                    `;
+                } else {
+                    card.innerHTML = `
+                        <div style="opacity: 0.6;">Empty ${slot.toUpperCase()} Slot</div>
+                    `;
+                }
+                gearGrid.appendChild(card);
+            });
+        }
+
+        function renderEggs() {
+            let zone = zones[state.currentZone];
+            document.getElementById("egg-zone-name").innerText = zone.name;
+
+            let grid = document.getElementById("egg-grid");
+            grid.innerHTML = "";
+
+            if (zone.eggs && zone.eggs.length > 0) {
+                zone.eggs.forEach(egg => {
+                    let petList = egg.pets.map(p => p.name).join(", ");
+                    let card = document.createElement("div");
+                    card.className = "shop-card";
+                    card.innerHTML = `
+                        <div>
+                            <strong>${egg.name}</strong>
+                            <div style="font-size:0.8rem;">Cost: ${egg.cost} Coins</div>
+                            <div style="font-size:0.7rem; opacity:0.7; margin-top:4px;">Contains: ${petList}</div>
+                        </div>
+                        <button onclick="hatchEgg('${egg.id}')">Hatch Egg</button>
+                    `;
+                    grid.appendChild(card);
+                });
+            } else {
+                grid.innerHTML = `<div style="font-size: 0.85rem; opacity: 0.6; grid-column: 1 / -1;">No eggs available in this biome yet.</div>`;
+            }
+        }
+
+        function renderPets() {
+            let grid = document.getElementById("pets-inventory");
+            grid.innerHTML = "";
+
+            if (state.pets.length === 0) {
+                grid.innerHTML = `<div style="font-size: 0.85rem; opacity: 0.6; grid-column: 1 / -1;">No pets hatched yet. Open eggs above!</div>`;
+                return;
+            }
+
+            state.pets.forEach((pet, index) => {
+                // Backward compatibility checks
+                if (!pet.level) pet.level = 1;
+                if (!pet.xp) pet.xp = 0;
+                if (pet.luckBonus && !pet.baseLuckBonus) {
+                    pet.baseLuckBonus = pet.luckBonus;
+                }
+
+                let currentPetLuck = getPetLuck(pet);
+                let nextXp = getPetNextXp(pet);
+
+                let cropOptions = cropTypes.map(c => {
+                    let count = state.crops[c.id] || 0;
+                    return `<option value="${c.id}">${c.name} (+${c.expValue} XP) [x${count}]</option>`;
+                }).join("");
+
+                let card = document.createElement("div");
+                card.className = "inv-item " + pet.class;
+                card.innerHTML = `
+                    <div>
+                        <div class="inv-item-name">${pet.name} (Lvl ${pet.level})</div>
+                        <div style="font-size:0.75rem;">Luck: +${currentPetLuck.toFixed(2)}x</div>
+                        <div style="font-size:0.7rem; opacity:0.8;">XP: ${pet.xp} / ${nextXp}</div>
+                    </div>
+                    <div>
+                        <select class="feed-select" id="feed-select-${index}">
+                            ${cropOptions}
+                        </select>
+                        <div class="btn-group">
+                            <button class="feed-btn" onclick="feedPet(${index}, document.getElementById('feed-select-${index}').value)">Feed Crop</button>
+                            <button class="sell-btn" style="background-color:#ef4444;" onclick="releasePet(${index})">Release</button>
+                        </div>
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        function renderInventory() {
+            let grid = document.getElementById("inventory");
+            grid.innerHTML = "";
+            let countTotal = 0;
+
+            for (let name in state.inventory) {
+                let count = state.inventory[name];
+                if (count <= 0) continue;
+                countTotal++;
+
+                let itemCard = document.createElement("div");
+                itemCard.className = "inv-item";
+                itemCard.innerHTML = `
+                    <div class="inv-item-name">${name}</div>
+                    <div>Qty: ${count}</div>
+                `;
+                grid.appendChild(itemCard);
+            }
+
+            if (countTotal === 0) {
+                grid.innerHTML = `<div style="font-size: 0.85rem; opacity: 0.6; grid-column: 1 / -1;">Your inventory is empty. Start rolling!</div>`;
+            }
+        }
+
+        function renderSeedShop() {
+            let grid = document.getElementById("seed-shop-grid");
+            grid.innerHTML = "";
+            cropTypes.forEach(crop => {
+                let card = document.createElement("div");
+                card.className = "shop-card garden-card";
+                card.innerHTML = `
+                    <div>
+                        <strong>${crop.name} Seed</strong>
+                        <div style="font-size:0.8rem;">Cost: ${crop.seedCost} C</div>
+                        <div style="font-size:0.75rem; color:#f59e0b;">Time: ${crop.growTime}s | Feed: +${crop.expValue} XP</div>
+                    </div>
+                    <button class="garden-btn" onclick="buySeed('${crop.id}')">Buy Seed</button>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        function renderSeedInventory() {
+            let grid = document.getElementById("seed-inventory");
+            grid.innerHTML = "";
+            let hasSeeds = false;
+
+            for (let cropId in state.seeds) {
+                let count = state.seeds[cropId];
+                if (count > 0) {
+                    hasSeeds = true;
+                    let crop = cropTypes.find(c => c.id === cropId);
+                    let card = document.createElement("div");
+                    card.className = "inv-item";
+                    card.style.borderColor = "var(--garden-color)";
+                    card.innerHTML = `
+                        <div>
+                            <div class="inv-item-name">${crop.name} Seed</div>
+                            <div style="font-size: 0.8rem; opacity: 0.8;">Owned: ${count}</div>
+                        </div>
+                        <div class="btn-group">
+                            <button class="garden-btn" onclick="plantSeed('${crop.id}')">Plant</button>
+                        </div>
+                    `;
+                    grid.appendChild(card);
+                }
+            }
+
+            if (!hasSeeds) {
+                grid.innerHTML = `<div style="font-size: 0.85rem; opacity: 0.6; grid-column: 1 / -1;">No seeds available. Purchase seeds from the Seed Shop above!</div>`;
+            }
+        }
+
+        function renderCropInventory() {
+            let grid = document.getElementById("crop-inventory");
+            grid.innerHTML = "";
+            let hasCrops = false;
+
+            for (let cropId in state.crops) {
+                let count = state.crops[cropId];
+                if (count > 0) {
+                    hasCrops = true;
+                    let crop = cropTypes.find(c => c.id === cropId);
+                    let card = document.createElement("div");
+                    card.className = "inv-item";
+                    card.style.borderColor = "var(--garden-color)";
+                    card.innerHTML = `
+                        <div class="inv-item-name">${crop.name}</div>
+                        <div>Harvested: ${count}</div>
+                        <div style="font-size: 0.75rem; color:#f59e0b;">XP Value: +${crop.expValue}</div>
+                    `;
+                    grid.appendChild(card);
+                }
+            }
+
+            if (!hasCrops) {
+                grid.innerHTML = `<div style="font-size: 0.85rem; opacity: 0.6; grid-column: 1 / -1;">No crops harvested yet. Plant and harvest crops in the Garden!</div>`;
+            }
+        }
+
+        function renderPlots() {
+            let grid = document.getElementById("garden-plots");
+            grid.innerHTML = "";
+            state.plots.forEach((plot, index) => {
+                let card = document.createElement("div");
+                card.className = "plot-card";
+
+                if (!plot.plantId) {
+                    card.innerHTML = `
+                        <div style="margin-auto:0;">Plot #${index + 1}</div>
+                        <div style="font-size: 0.8rem; opacity: 0.6;">Empty</div>
+                        <div></div>
+                    `;
+                } else {
+                    let crop = cropTypes.find(c => c.id === plot.plantId);
+                    let elapsed = (Date.now() - plot.startTime) / 1000;
+                    let remaining = Math.max(0, plot.duration - elapsed);
+
+                    if (remaining === 0) {
+                        card.className += " ready";
+                        card.innerHTML = `
+                            <div><strong>${crop.name}</strong></div>
+                            <div style="font-size:0.8rem; color:var(--garden-color);">Ready!</div>
+                            <button class="garden-btn" style="padding:4px 8px; font-size:0.75rem;" onclick="harvestPlot(${index})">Harvest</button>
+                        `;
+                    } else {
+                        card.className += " growing";
+                        card.innerHTML = `
+                            <div><strong>${crop.name}</strong></div>
+                            <div style="font-size:0.8rem;">${remaining.toFixed(1)}s left</div>
+                            <div style="font-size:0.7rem; opacity:0.6;">Growing...</div>
+                        `;
+                    }
+                }
+                grid.appendChild(card);
+            });
+        }
+
+        function renderRebirthShop() {
+            document.getElementById("perm-luck-lvl").innerText = state.permLuckLvl;
+            document.getElementById("perm-coin-lvl").innerText = state.permCoinLvl;
+            document.getElementById("perm-speed-lvl").innerText = state.permSpeedLvl;
+            document.getElementById("perm-pets-lvl").innerText = state.permPetsLvl;
+            document.getElementById("perm-crop-yield-lvl").innerText = state.permCropYieldLvl;
+            document.getElementById("perm-crop-val-lvl").innerText = state.permCropValLvl;
+        }
+
+        function resetData() {
+            if (confirm("Are you sure you want to reset all game data?")) {
+                localStorage.removeItem("rarityHunterSave");
+                location.reload();
+            }
+        }
+
+        function saveGame() {
+            localStorage.setItem("rarityHunterSave", JSON.stringify(state));
+        }
+
+        function loadGame() {
+            let saved = localStorage.getItem("rarityHunterSave");
+            if (saved) {
+                try {
+                    let parsed = JSON.parse(saved);
+                    state = { ...state, ...parsed };
+                } catch(e) {}
+            }
+        }
+
+        setInterval(saveGame, 10000);
+    </script>
+</body>
+</html>
