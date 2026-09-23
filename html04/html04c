@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- Character encoding and viewport for responsive design -->
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Table Task</title>
+  <!-- The block below is CSS. It only draws borders on tables so you can
+       see rows and cells. CSS is Lesson 05 - leave this alone for now. -->
+  <style>
+    table, th, td { border: 1px solid #333; border-collapse: collapse; }
+    th, td { padding: 6px; }
+  </style>
+</head>
+<body>
+
+  <h1>HTML Tables Task</h1>
+  <p>Practice building data tables with captions, header cells, colspan, and rowspan.</p>
+
+  <!-- ===== TODO 1: Build a simple table ===== -->
+  <section id="simple-table">
+    <h2>Simple Table</h2>
+    <p>A basic table has a caption, one header row, and data rows.</p>
+
+    <p>
+      <strong>Remember:</strong> Use &lt;th&gt; for header cells and &lt;td&gt; for data cells.
+      Each row goes inside its own &lt;tr&gt;.
+    </p>
+
+    <!-- TODO 1: Add table here -->
+    <table>
+      <caption>Student Grades</caption>
+      <tr>
+        <th>Name</th>
+        <th>Math</th>
+        <th>English</th>
+        <th>Science</th>
+      </tr>
+      <tr>
+        <td>Alice</td>
+        <td>95</td>
+        <td>87</td>
+        <td>92</td>
+      </tr>
+      <tr>
+        <td>Bob</td>
+        <td>88</td>
+        <td>91</td>
+        <td>85</td>
+      </tr>
+      <tr>
+        <td>Carol</td>
+        <td>92</td>
+        <td>94</td>
+        <td>89</td>
+      </tr>
+    </table>
+
+  </section>
+
+  <!-- ===== TODO 2: Build a table with colspan ===== -->
+  <section id="colspan-table">
+    <h2>Table with colspan (Column Spanning)</h2>
+    <p>The <code>colspan</code> attribute makes one cell stretch across more than one column.</p>
+
+    <p>
+      <strong>Example:</strong> &lt;td colspan="2"&gt; makes one cell as wide as 2 columns.
+    </p>
+
+    <!-- TODO 2: Add table here -->
+    <table>
+      <caption>Quarterly Sales by Region</caption>
+      <tr>
+        <th>Region</th>
+        <th>Q1</th>
+        <th>Q2</th>
+        <th>Q3</th>
+      </tr>
+      <tr>
+        <td>East</td>
+        <td>$50,000</td>
+        <td>$55,000</td>
+        <td>$60,000</td>
+      </tr>
+      <tr>
+        <td>West</td>
+        <td>$45,000</td>
+        <td>$48,000</td>
+        <td>$52,000</td>
+      </tr>
+      <tr>
+        <td colspan="4">All amounts are in US dollars.</td>
+      </tr>
+    </table>
+
+  </section>
+
+  <!-- ===== TODO 3: Build a table with rowspan ===== -->
+  <section id="rowspan-table">
+    <h2>Table with rowspan (Row Spanning)</h2>
+    <p>The <code>rowspan</code> attribute makes one cell stretch down across more than one row.</p>
+
+    <p>
+      <strong>Example:</strong> &lt;td rowspan="2"&gt; makes one cell as tall as 2 rows.
+    </p>
+
+    <!-- TODO 3: Add table here -->
+    <table>
+      <caption>Product Inventory</caption>
+      <tr>
+        <th>Product</th>
+        <th>Location</th>
+        <th>Quantity</th>
+      </tr>
+      <tr>
+        <td rowspan="2">Laptop</td>
+        <td>Warehouse A</td>
+        <td>15</td>
+      </tr>
+      <tr>
+        <td>Warehouse B</td>
+        <td>10</td>
+      </tr>
+      <tr>
+        <td>Monitor</td>
+        <td>Warehouse A</td>
+        <td>20</td>
+      </tr>
+    </table>
+
+  </section>
+
+  <!-- ===== Reference: Accessible table (already done - just read it) ===== -->
+  <section id="accessible-table">
+    <h2>Accessible Table (Reference)</h2>
+    <p>Best practice: add the <code>scope</code> attribute to header cells so screen readers can tell which cells they label.</p>
+
+    <table>
+      <caption>Product Performance Report</caption>
+      <tr>
+        <th scope="col">Product</th>
+        <th scope="col">Q1 Sales</th>
+        <th scope="col">Q2 Sales</th>
+      </tr>
+      <tr>
+        <th scope="row">Widget A</th>
+        <td>$25,000</td>
+        <td>$30,000</td>
+      </tr>
+      <tr>
+        <th scope="row">Widget B</th>
+        <td>$15,000</td>
+        <td>$18,000</td>
+      </tr>
+    </table>
+  </section>
+
+  <footer>
+    <p>Check your work: open this page in a browser and compare each table to the picture in its TODO comment.</p>
+  </footer>
+
+</body>
+</html>

@@ -1,23 +1,23 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>HTML5 Media Task</title>
-</head>
- <style>
+  <!-- Character encoding and viewport for responsive design -->
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>HTML5 Media Task</title>
+  <!-- The block below is CSS. It only draws borders on tables so you can
+       see rows and cells. CSS is Lesson 05 - leave this alone for now. -->
+  <style>
     table, th, td { border: 1px solid #333; border-collapse: collapse; }
     th, td { padding: 6px; }
   </style>
+</head>
 <body>
-  <video width="400" height="300">
 
+  <h1>HTML5 Media Task</h1>
+  <p>Practice embedding videos, audio, and external media content.</p>
 
-  </video>  
-    
-
-
-
+  <!-- ===== TODO 1: Embed HTML5 video ===== -->
   <section id="video">
     <h2>Embed HTML5 Video</h2>
     <p>Use the <code>&lt;video&gt;</code> tag to embed local video files.</p>
@@ -27,18 +27,15 @@
     </p>
 
     <!-- TODO 1: Add video element here -->
-    ___
+    <video width="400" height="300" controls>
+      <source src="media/demo.mp4" type="video/mp4">
+      <source src="media/demo.webm" type="video/webm">
+      Your browser does not support HTML5 video.
+    </video>
 
   </section>
 
   <!-- ===== TODO 2: Embed HTML5 audio ===== -->
-  <!-- Task: Create an <audio> element with:
-       - controls attribute
-       - Two <source> tags:
-         1. src="media/podcast.mp3" type="audio/mpeg"
-         2. src="media/podcast.ogg" type="audio/ogg"
-       - Fallback text: "Your browser does not support HTML5 audio."
-  -->
   <section id="audio">
     <h2>Embed HTML5 Audio</h2>
     <p>Use the <code>&lt;audio&gt;</code> tag for podcasts, music, or sound effects.</p>
@@ -48,19 +45,15 @@
     </p>
 
     <!-- TODO 2: Add audio element here -->
-    ___
+    <audio controls>
+      <source src="media/podcast.mp3" type="audio/mpeg">
+      <source src="media/podcast.ogg" type="audio/ogg">
+      Your browser does not support HTML5 audio.
+    </audio>
 
   </section>
 
   <!-- ===== TODO 3: Embed YouTube video with iframe ===== -->
-  <!-- Task: Create an <iframe> element with:
-       - width="560"
-       - height="315"
-       - src="https://www.youtube.com/embed/aqz-KE-bpKQ"
-       - title="Sample YouTube Video"
-       - allowfullscreen attribute
-       - Fallback text inside: (your browser doesn't support iframes)
-  -->
   <section id="youtube">
     <h2>Embed YouTube Video</h2>
     <p>Use <code>&lt;iframe&gt;</code> to embed videos from external sources like YouTube.</p>
@@ -70,7 +63,9 @@
     </p>
 
     <!-- TODO 3: Add YouTube iframe here -->
-    ___
+    <iframe width="560" height="315" src="https://www.youtube.com/embed/aqz-KE-bpKQ" title="Sample YouTube Video" allowfullscreen>
+      Your browser does not support iframes.
+    </iframe>
 
   </section>
 
@@ -114,33 +109,6 @@
   <footer>
     <p>Task complete! Test all media elements in your browser.</p>
   </footer>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 </body>
 </html>
