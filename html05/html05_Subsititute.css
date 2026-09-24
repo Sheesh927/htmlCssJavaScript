@@ -1,0 +1,11 @@
+/* Step 2 font */
+* {
+   font-family: Arial, Helvetica, sans-serif;
+}
+/* Step 3 background */
+body {
+    background-color: rgb(225, 0, 255);
+}
+h1 {
+    color: brown; font: 2.5rem;
+}

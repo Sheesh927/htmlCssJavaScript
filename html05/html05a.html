@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- Meta tags -->
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- Page title -->
+  <title>Inline and Internal CSS Task</title>
+
+  <!-- ===== TODO 2 & TODO 5: Internal stylesheet ===== -->
+  <style>
+    /* TODO 2: Element selector for h2 */
+    h2 {
+      color: green;
+      font-size: 24px;
+    }
+
+    /* TODO 2: Class selector for .intro */
+    .intro {
+      background-color: lightyellow;
+      padding: 10px;
+    }
+
+    /* TODO 2: ID selector for #special */
+    #special {
+      color: red;
+      font-weight: bold;
+    }
+
+    /* TODO 5: Internal style rule for h1 */
+    h1 {
+      color: orange;
+    }
+  </style>
+
+</head>
+<body>
+
+  <!-- ===== TODO 1 & TODO 5: Inline style deleted so internal style (orange) takes effect ===== -->
+  <h1>Inline and Internal CSS Practice</h1>
+
+  <p>This page practices two ways to add CSS: inline styles and an internal stylesheet.
+     The third way, an external stylesheet, is in the 05b task.</p>
+
+  <section>
+    <h2>Element Selectors</h2>
+    <p>An element selector uses the tag name, like <code>h2</code>. It styles every tag of that type.
+       After TODO 2, all three h2 headings on this page turn green at once.</p>
+  </section>
+
+  <section>
+    <h2>Class Selectors</h2>
+
+    <!-- ===== TODO 3: Added class="intro" to both paragraphs ===== -->
+    <p class="intro">A class selector starts with a dot, like <code>.intro</code>.</p>
+    <p class="intro">One class can be used on as many tags as you want. This paragraph uses the same class as the one above.</p>
+  </section>
+
+  <section>
+    <h2>ID Selectors</h2>
+
+    <!-- ===== TODO 4: Added id="special" to the div ===== -->
+    <div id="special">An ID selector starts with a hash, like <code>#special</code>. An id can only be used on one tag per page.</div>
+  </section>
+
+  <footer>
+    <p>When you're done: the h1 is orange, all three h2 headings are green,
+       two paragraphs have a yellow background, and the ID sentence is red and bold.</p>
+  </footer>
+
+</body>
+</html>
