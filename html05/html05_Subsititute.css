@@ -1,11 +1,96 @@
-/* Step 2 font */
+/* Step 2: Everything selector */
 * {
-   font-family: Arial, Helvetica, sans-serif;
+  font-family: Arial, sans-serif;
 }
-/* Step 3 background */
+
+/* Step 3: Body styling */
 body {
-    background-color: rgb(225, 0, 255);
+  background-color: #f4f4f9;
+  color: #333333;
 }
+
+/* Step 4: H1 element selector */
 h1 {
-    color: brown; font: 2.5rem;
+  font-size: 2.5rem;
+}
+
+/* Step 5: ID selector */
+#page-title {
+  background-color: #2c3e50;
+  color: #ffffff;
+  padding: 20px;
+}
+
+/* Step 6: Combined selector for h2 and h3 */
+h2, h3 {
+  color: #2980b9;
+}
+
+/* Step 7: Class selector .note */
+.note {
+  padding: 10px;
+  background-color: rgba(0, 128, 255, 0.1);
+}
+
+/* Step 8: Combined element and class selector */
+p.highlight {
+  background-color: #ffeaa7;
+}
+
+/* Step 9: Buttons */
+.btn {
+  padding: 10px 20px;
+  font-size: 1rem;
+  border: 2px solid #333;
+  cursor: pointer;
+}
+
+.btn-red {
+  background-color: #ff0000; /* Hex format */
+}
+
+.btn-green {
+  background-color: rgb(0, 200, 0); /* RGB format */
+}
+
+.btn-blue {
+  background-color: hsl(210, 100%, 50%); /* HSL format */
+}
+
+/* Step 10: Box model */
+.box {
+  width: 100px;
+  height: 100px;
+  padding: 20px;
+  margin: 10px; /* Changed from 50px to 10px as instructed */
+  border: 10px solid black;
+  background-color: #e67e22;
+}
+/* When margin was changed from 50px to 10px, the box moved closer to the surrounding elements because the outer spacing around the box was reduced. */
+
+/* Step 11: Percent width */
+.half {
+  width: 50%;
+  background-color: #1abc9c;
+  padding: 10px;
+}
+
+/* Step 12: Specificity Test */
+#test {
+  color: green;
+}
+
+.test-class {
+  color: blue;
+}
+
+p {
+  color: red;
+}
+/* The text turns green. Specificity wins over order: an ID selector (#test) beats a class selector (.test-class), which beats an element selector (p), regardless of where they are written in the file. */
+
+/* Step 13: Footer paragraph styling */
+footer p {
+  font-size: 0.8rem;
+  color: #7f8c8d;
 }
