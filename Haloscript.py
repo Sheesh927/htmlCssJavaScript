@@ -1,4 +1,4 @@
-import math
+mport math
 import random
 import sys
 import pygame
