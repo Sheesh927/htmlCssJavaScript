@@ -1,0 +1,23 @@
+body {
+  background-color: lightyellow; /* test rule - change once links work */
+  font-family: Arial, Helvetica, sans-serif;
+  text-align: center;
+}
+h1 {
+    color: rgba(253, 27, 27, 0.956);
+    font-weight: 770;
+    text-decoration: dashed;
+}
+footer {
+    color: maroon;
+    font-size: xx-small
+}
+table, th, td { border: 4px solid #4052f3; border-collapse: collapse;}
+th, td {padding: 8px}
+th { background-color:rgb(105, 200, 255)}
+
+#table {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}

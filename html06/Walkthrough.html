@@ -1,62 +1,154 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Box Model Practice</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      margin: 0;                  /* remove the browser's default space around the page */
-      background-color: #eeeeee;
-    }
-    * {
-        box-sizing: border-box;
-    }
-    /* Add each new rule below this line */
-    /* A card: space inside, a line around it, space outside */
-.card {
-    width: 300px;
-  background-color: white;
-  padding: 16px 32px;              /* space INSIDE the border */
-  border: 2px solid #1aececb6;    /* width, style, color */
-  border-radius: 8px;           /* rounded corners */
-  margin: 1rem;                 /* space OUTSIDE the border */
-}
+To make the position: sticky header work, the page needs enough vertical scrollable content. Here is your complete,
+updated code with extra dummy content added to <main> and two minor CSS typos fixed (outline: 1px solid reds fixed to
+  red, and duplicate width in .card cleaned up):
 
-/* Headings come with a top margin. Remove it inside the card. */
-.card h2 {
-    
-  margin-top: 0;
-}
-main {
-    max-width: 600px;
-    margin: 0 auto;
-    padding: 1rem;
-}
-* {
-    outline: 1px solid reds;
-}
-  </style>
-</head>
-<body>
-  <header>
-    <h1>Box Model Practice</h1>
-    <nav>
-      <a href="#">Home</a>
-      <a href="#">About</a>
-      <a href="#">Contact</a>
-    </nav>
-  </header>
-  <main>
-    <div class="card">
-      <h2>Card One</h2>
-      <p>A card is a box with a heading and some text.</p>
-    </div>
-    <div class="card">
-      <h2>Card Two</h2>
-      <p>We will use cards to learn padding, border, and margin.</p>
-    </div>
-  </main>
-</body>
-</html>
+  HTML
+  <!DOCTYPE html>
+  <html lang="en">
+
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Box Model Practice</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        /* remove the browser's default space around the page */
+        background-color: #eeeeee;
+      }
+
+      * {
+        box-sizing: border-box;
+        outline: 1px solid red;
+      }
+
+      /* A card: space inside, a line around it, space outside */
+      .card {
+        background-color: white;
+        padding: 16px 32px;
+        /* space INSIDE the border */
+        border: 2px solid #1aececb6;
+        /* width, style, color */
+        border-radius: 8px;
+        /* rounded corners */
+        margin: 1rem;
+        display: inline-block;
+        vertical-align: top;
+        width: 15rem;
+        /* space OUTSIDE the border */
+      }
+
+      nav a {
+        display: inline-block;
+        padding: 0.5rem 1rem;
+        margin-right: 0.5rem;
+        background-color: #ffffff;
+        color: rgb(1, 81, 255);
+        text-decoration: none;
+        border-radius: 8px;
+        border: 2px solid #1aececb6;
+        /* width, style, color */
+      }
+
+      /* Headings come with a top margin. Remove it inside the card. */
+      .card h2 {
+        margin-top: 0;
+      }
+
+      main {
+        max-width: 600px;
+        margin: 0 auto;
+        padding: 1rem;
+      }
+
+      /* Only while the mouse is on a nav link */
+      nav a:hover {
+        background-color: #a6ff01c5;
+        /* hover background */
+      }
+
+      /* Only while the mouse is on a card */
+      .card:hover {
+        border-color: #ff9800;
+      }
+
+      header {
+        position: sticky;
+        top: 0;
+        z-index: 10;
+        background-color: #0d2a4a;
+        color: white;
+        padding: 1rem;
+      }
+
+      header h1 {
+        margin: 0;
+      }
+    </style>
+  </head>
+
+  <body>
+    <header>
+      <h1>Box Model Practice</h1>
+      <nav>
+        <a href="#">Home</a>
+        <a href="#">About</a>
+        <a href="#">Contact</a>
+      </nav>
+    </header>
+
+    <main>
+      <div class="card">
+        <h2>Card One</h2>
+        <p>A card is a box with a heading and some text.</p>
+      </div>
+
+      <div class="card">
+        <h2>Card Two</h2>
+        <p>We will use cards to learn padding, border, and margin.</p>
+      </div>
+
+      <div class="card">
+        <h2>Card Three</h2>
+        <p>Scroll down to test how the header stays fixed at the top of the viewport.</p>
+      </div>
+
+      <div class="card">
+        <h2>Card Four</h2>
+        <p>Understanding the CSS box model helps layout elements predictably.</p>
+      </div>
+
+      <div class="card">
+        <h2>Card Five</h2>
+        <p>Margin creates spacing outside the border of an element.</p>
+      </div>
+
+      <div class="card">
+        <h2>Card Six</h2>
+        <p>Padding creates space inside an element, between content and border.</p>
+      </div>
+
+      <div class="card">
+        <h2>Card Seven</h2>
+        <p>The border sits directly between padding and margin.</p>
+      </div>
+
+      <div class="card">
+        <h2>Card Eight</h2>
+        <p>Sticky positioning keeps elements in the document flow until a scroll threshold is hit.</p>
+      </div>
+
+      <div class="card">
+        <h2>Card Nine</h2>
+        <p>Keep scrolling down to continue checking the sticky header behavior.</p>
+      </div>
+
+      <div class="card">
+        <h2>Card Ten</h2>
+        <p>You reached the bottom! Notice how the header stayed visible the whole time.</p>
+      </div>
+    </main>
+  </body>
+
+  </html>
