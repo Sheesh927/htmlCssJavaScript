@@ -85,6 +85,34 @@ updated code with extra dummy content added to <main> and two minor CSS typos fi
       header h1 {
         margin: 0;
       }
+
+
+      .has-badge {
+        position: relative;
+      }
+
+      .badge {
+        position: absolute;
+        top: 0.5rem;
+        right: 0.5rem;
+        background-color: #ff9800;
+        color: white;
+        padding: 0.25rem 0.5rem;
+        border-radius: 4px;
+      }
+
+      .to-top {
+        position: fixed;
+        bottom: 1rem;
+        right: 1rem;
+        background-color: #1565c0;
+        color: white;
+        padding: 0.25rem 0.5rem;
+        text-decoration: none;
+        border-radius: 2px;
+      }
+
+
     </style>
   </head>
 
@@ -99,9 +127,16 @@ updated code with extra dummy content added to <main> and two minor CSS typos fi
     </header>
 
     <main>
+
       <div class="card">
         <h2>Card One</h2>
         <p>A card is a box with a heading and some text.</p>
+      </div>
+
+      <div class="card has-badge">
+        <span class="badge">NEW</span>
+        <h2>Card 3</h2>
+
       </div>
 
       <div class="card">
@@ -149,6 +184,7 @@ updated code with extra dummy content added to <main> and two minor CSS typos fi
         <p>You reached the bottom! Notice how the header stayed visible the whole time.</p>
       </div>
     </main>
+    <a href="#" class="to-top">Back to the top</a>
   </body>
 
   </html>
