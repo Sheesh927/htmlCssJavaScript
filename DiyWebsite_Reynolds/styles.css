@@ -5,11 +5,12 @@
 
 html {
   color: rgba(128, 0, 0, 0.815);
+margin
 }
 
 body {
   font-family: "Blaka", sans-serif;
-  color: rgba(128, 0, 0, 0.815);
+  color: beige
   margin: 0;
 }
 
@@ -31,7 +32,7 @@ main {
 
 section {
   margin-bottom: 0;
-  color: rgba(128, 0, 0, 0.815);
+  color: beige
 }
 
 th, td {
@@ -56,7 +57,34 @@ table, th, td {
   border: 4px solid #4052f3; 
   border-collapse: collapse;
 }
+header {
+  position: sticky;
+  top: 0;              /* stick at the top edge */
+  z-index: 10;         /* stay above the content under it */
+  /* your header MUST have a background-color, or content shows through */
+}
+/* Each gallery figure becomes a card */
+figure {
+  display: inline-block;     /* side by side */
+  vertical-align: top;       /* line up the tops */
+  width: 18rem;
+  padding: 1rem;             /* space inside the card */
+  margin: 1rem;              /* space between cards */
+  border: 1px solid #cccccc;
+  border-radius: 8px;
+  background-color: white;
+}
 
+/* Keep each photo inside its card */
+figure img {
+  max-width: 100%;
+  height: auto;
+}
+
+/* A hover effect on the cards */
+figure:hover {
+  border-color: aqua;
+}
 th { 
   background-color: rgb(105, 200, 255);
 }
