@@ -1,0 +1,132 @@
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-family: Arial, sans-serif;
+}
+
+body {
+  background-color: #f5f5f5;
+  display: flex;
+  justify-content: center;
+  padding: 20px;
+}
+
+/* Page Container */
+.page-container {
+  width: 100%;
+  max-width: 900px;
+  background-color: #ffffff;
+  border: 2px solid #000;
+  display: grid;
+  grid-template-rows: auto auto auto auto auto;
+}
+
+/* 1# Navigation Grid */
+.navbar-grid {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  border-bottom: 2px solid #000;
+  text-align: center;
+  padding: 15px 0;
+}
+
+.nav-item {
+  font-size: 1rem;
+  font-weight: bold;
+}
+
+/* 7# Hero Section Grid */
+.hero-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  align-items: center;
+  border-bottom: 2px solid #000;
+  padding: 40px 20px;
+  gap: 20px;
+}
+
+.carson-box {
+  display: grid;
+  place-items: center;
+}
+
+.carson-box h1 {
+  font-size: 2.5rem;
+  letter-spacing: 2px;
+}
+
+.video-box {
+  display: grid;
+  place-items: center;
+  height: 180px;
+  border: 1px solid #000;
+  background-color: #fff;
+  font-size: 1.2rem;
+}
+
+/* Common Section Titles & Cards */
+.section-title {
+  font-size: 1.5rem;
+  margin-bottom: 20px;
+  font-weight: normal;
+}
+
+.card {
+  border: 2px solid #000;
+  border-radius: 12px;
+  height: 180px;
+  display: grid;
+  place-items: center;
+  font-size: 1.1rem;
+  background-color: #fff;
+}
+
+/* 8# Top Seller Grid */
+.top-seller-grid {
+  border-bottom: 2px solid #000;
+  padding: 30px 20px;
+}
+
+.top-seller-grid .cards-container {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 15px;
+}
+
+/* 13# Discounts Grid */
+.discounts-grid {
+  display: grid;
+  grid-template-columns: 3fr 1.2fr;
+  border-bottom: 2px solid #000;
+  padding: 30px 20px;
+  gap: 20px;
+  align-items: end;
+}
+
+.discounts-left .cards-container {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 15px;
+}
+
+/* Semi-Uni Box */
+.semi-uni-box {
+  border: 2px solid #000;
+  border-radius: 20px;
+  height: 220px;
+  display: grid;
+  place-items: center;
+  text-align: center;
+  font-size: 1rem;
+  padding: 10px;
+  background: linear-gradient(135deg, #a8edf7 0%, #fed6e3 100%);
+}
+
+/* 17# Footer Grid */
+.footer-grid {
+  display: grid;
+  place-items: center;
+  padding: 25px;
+  font-size: 1.2rem;
+}
