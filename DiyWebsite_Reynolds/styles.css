@@ -5,12 +5,17 @@
 
 html {
   color: rgba(128, 0, 0, 0.815);
-margin
+margin: auto;
+
 }
 
 body {
+  display: flex;
+  flex-direction: column;
+  background-color: rgb(128, 0, 0); /* Your background color */
+  color: #ffffff;
   font-family: "Blaka", sans-serif;
-  color: beige
+  color: beige;
   margin: 0;
 }
 
@@ -23,7 +28,9 @@ header, footer {
   padding: 1rem 2rem; 
   background-color: rgba(128, 0, 0, 0.815);
 }
-
+footer{
+  flex: 100;
+}
 main {
   margin: 0 auto;  
   padding: 1rem;

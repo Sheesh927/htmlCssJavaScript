@@ -5,21 +5,42 @@
   font-family: Arial, sans-serif;
 }
 
+/* Dynamic Multi-color Background behind the entire screen */
 body {
-  background-color: #f5f5f5;
+  min-height: 100vh;
+  background: linear-gradient(-45deg, #a8edf7, #fed6e3, #ffecd2, #fcb69f);
+  background-size: 400% 400%;
+  animation: gradientBG 12s ease infinite;
   display: flex;
   justify-content: center;
+  align-items: center;
   padding: 20px;
+}
+
+@keyframes gradientBG {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
 }
 
 /* Page Container */
 .page-container {
   width: 100%;
   max-width: 900px;
-  background-color: #ffffff;
+  background-color: rgba(255, 255, 255, 0.92);
+  backdrop-filter: blur(8px);
   border: 2px solid #000;
+  border-radius: 8px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
   display: grid;
   grid-template-rows: auto auto auto auto auto;
+  overflow: hidden;
 }
 
 /* 1# Navigation Grid */
@@ -27,13 +48,28 @@ body {
   display: grid;
   grid-template-columns: repeat(6, 1fr);
   border-bottom: 2px solid #000;
-  text-align: center;
-  padding: 15px 0;
+  padding: 10px 0;
+  background-color: #ffffff;
 }
 
-.nav-item {
+.nav-button {
+  background: transparent;
+  border: none;
   font-size: 1rem;
   font-weight: bold;
+  padding: 10px 5px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  color: #000;
+}
+
+.nav-button:hover {
+  background-color: #000;
+  color: #fff;
+}
+
+.nav-button:active {
+  transform: scale(0.95);
 }
 
 /* 7# Hero Section Grid */
@@ -46,32 +82,46 @@ body {
   gap: 20px;
 }
 
-.carson-box {
-  display: grid;
-  place-items: center;
-}
-
-.carson-box h1 {
-  font-size: 2.5rem;
-  letter-spacing: 2px;
-}
-
 .video-box {
   display: grid;
   place-items: center;
   height: 180px;
-  border: 1px solid #000;
+  border: 2px solid #000;
   background-color: #fff;
   font-size: 1.2rem;
+  font-weight: bold;
+}
+
+.hero-cta-button {
+  height: 60px;
+  border: 2px solid #000;
+  border-radius: 8px;
+  background-color: #000;
+  color: #fff;
+  font-size: 1.1rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.hero-cta-button:hover {
+  background-color: #333;
+  transform: translateY(-2px);
+}
+
+.hero-cta-button:active {
+  transform: translateY(0);
 }
 
 /* Common Section Titles & Cards */
 .section-title {
   font-size: 1.5rem;
   margin-bottom: 20px;
-  font-weight: normal;
+  font-weight: bold;
+  text-transform: capitalize;
 }
 
+/* Clickable Cards */
 .card {
   border: 2px solid #000;
   border-radius: 12px;
@@ -79,7 +129,23 @@ body {
   display: grid;
   place-items: center;
   font-size: 1.1rem;
+  font-weight: bold;
   background-color: #fff;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  color: #000;
+  outline: none;
+}
+
+.card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 6px 0px #000;
+  background-color: #fafafa;
+}
+
+.card:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 0px #000;
 }
 
 /* 8# Top Seller Grid */
@@ -110,7 +176,7 @@ body {
   gap: 15px;
 }
 
-/* Semi-Uni Box */
+/* Semi-Uni Box (Adapted to glass overlay aesthetic) */
 .semi-uni-box {
   border: 2px solid #000;
   border-radius: 20px;
@@ -119,8 +185,10 @@ body {
   place-items: center;
   text-align: center;
   font-size: 1rem;
+  font-weight: bold;
   padding: 10px;
-  background: linear-gradient(135deg, #a8edf7 0%, #fed6e3 100%);
+  background: rgba(255, 255, 255, 0.4);
+  backdrop-filter: blur(5px);
 }
 
 /* 17# Footer Grid */
@@ -129,4 +197,6 @@ body {
   place-items: center;
   padding: 25px;
   font-size: 1.2rem;
+  font-weight: bold;
+  background-color: #fff;
 }
