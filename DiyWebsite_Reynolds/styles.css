@@ -66,11 +66,17 @@ table, th, td {
 }
 header {
   position: sticky;
-  top: 0;              /* stick at the top edge */
-  z-index: 10;         /* stay above the content under it */
-  /* your header MUST have a background-color, or content shows through */
+  top: 0;             
+  z-index: 10;        
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 2rem;
 }
-/* Each gallery figure becomes a card */
+header nav {
+  display: flex;
+  gap: 1rem;
+}
 figure {
   display: inline-block;     /* side by side */
   vertical-align: top;       /* line up the tops */
