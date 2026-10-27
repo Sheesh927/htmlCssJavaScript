@@ -11,6 +11,7 @@
   <!-- Stylesheet -->
   <link rel="stylesheet" href="ai.css">
 </head>
+
 <body class="p-2 sm:p-4 md:p-8 flex justify-center items-center">
 
   <!-- Main Glassmorphic Container -->
@@ -27,7 +28,7 @@
     <nav class="navbar-grid grid grid-cols-1 md:grid-cols-12 border-b border-slate-900/10 bg-white/70 backdrop-blur-md px-4 lg:px-8 py-4 items-center gap-4">
       
       <!-- Brand Logo + Slogan -->
-      <div class="md:col-span-4 flex items-center gap-3 cursor-pointer group" onclick="scrollToTop()">
+      <div id="brand-logo" class="md:col-span-4 flex items-center gap-3 cursor-pointer group">
         <div class="relative flex flex-col items-center justify-center w-10 h-10 rounded-xl bg-black text-white shadow-md group-hover:scale-105 transition-transform duration-300">
           <span class="text-xs font-bold text-amber-400 leading-none mb-0.5">✝</span>
           <span class="text-[10px] font-black tracking-tighter leading-none">NJAH</span>
@@ -40,27 +41,27 @@
 
       <!-- Nav Category Filter Buttons -->
       <div class="md:col-span-5 flex items-center justify-center gap-1 lg:gap-1.5 flex-wrap">
-        <button onclick="filterCategory('all')" class="nav-button active bg-black text-white font-bold text-xs uppercase tracking-wider py-2 px-3.5 rounded-lg hover:bg-black hover:text-white transition-all">Shop All</button>
-        <button onclick="filterCategory('bestsellers')" class="nav-button text-slate-600 font-bold text-xs uppercase tracking-wider py-2 px-3.5 rounded-lg hover:bg-black hover:text-white transition-all">Best Sellers</button>
-        <button onclick="filterCategory('clearance')" class="nav-button text-slate-600 font-bold text-xs uppercase tracking-wider py-2 px-3.5 rounded-lg hover:bg-black hover:text-white transition-all">Clearance</button>
-        <button onclick="scrollToAbout()" class="nav-button text-slate-600 font-bold text-xs uppercase tracking-wider py-2 px-3.5 rounded-lg hover:bg-black hover:text-white transition-all">About</button>
+        <button data-filter="all" class="nav-button active bg-black text-white font-bold text-xs uppercase tracking-wider py-2 px-3.5 rounded-lg hover:bg-black hover:text-white transition-all">Shop All</button>
+        <button data-filter="bestsellers" class="nav-button text-slate-600 font-bold text-xs uppercase tracking-wider py-2 px-3.5 rounded-lg hover:bg-black hover:text-white transition-all">Best Sellers</button>
+        <button data-filter="clearance" class="nav-button text-slate-600 font-bold text-xs uppercase tracking-wider py-2 px-3.5 rounded-lg hover:bg-black hover:text-white transition-all">Clearance</button>
+        <button id="nav-about-btn" class="nav-button text-slate-600 font-bold text-xs uppercase tracking-wider py-2 px-3.5 rounded-lg hover:bg-black hover:text-white transition-all">About</button>
       </div>
 
       <!-- Search & Cart CTA -->
       <div class="md:col-span-3 flex items-center justify-end gap-3">
         <!-- Search Bar -->
         <div class="relative w-full max-w-[160px]">
-          <input type="text" id="search-input" onkeyup="handleSearch()" placeholder="Search hoodies..." class="w-full pl-8 pr-3 py-1.5 rounded-full bg-white/80 border border-slate-300 text-xs font-medium focus:outline-none focus:ring-2 focus:ring-black">
+          <input type="text" id="search-input" placeholder="Search hoodies..." class="w-full pl-8 pr-3 py-1.5 rounded-full bg-white/80 border border-slate-300 text-xs font-medium focus:outline-none focus:ring-2 focus:ring-black">
           <i class="fa-solid fa-magnifying-glass absolute left-3 top-2.5 text-slate-400 text-xs"></i>
         </div>
 
         <!-- Wishlist -->
-        <button onclick="showNotification('Saved item to your browser wishlist!')" class="relative p-2 rounded-full hover:bg-black/5 text-slate-800 transition-colors">
+        <button id="wishlist-btn" class="relative p-2 rounded-full hover:bg-black/5 text-slate-800 transition-colors">
           <i class="fa-regular fa-heart text-base"></i>
         </button>
 
         <!-- Cart Button -->
-        <button onclick="toggleCart()" class="relative flex items-center justify-center gap-2 bg-black hover:bg-slate-800 text-white font-bold text-xs uppercase tracking-wider py-2.5 px-4 rounded-xl transition-all shadow-lg hover:shadow-xl active:scale-95">
+        <button id="cart-toggle-btn" class="relative flex items-center justify-center gap-2 bg-black hover:bg-slate-800 text-white font-bold text-xs uppercase tracking-wider py-2.5 px-4 rounded-xl transition-all shadow-lg hover:shadow-xl active:scale-95">
           <i class="fa-solid fa-bag-shopping"></i>
           <span id="cart-count" class="bg-amber-400 text-black text-[10px] rounded-full h-4 w-4 flex items-center justify-center font-extrabold">0</span>
         </button>
@@ -91,12 +92,12 @@
             <span class="text-xs font-extrabold uppercase tracking-wider text-slate-800">Select Size:</span>
             <span id="selected-hero-size-label" class="text-xs font-bold text-amber-600 uppercase">M (Medium)</span>
           </div>
-          <div class="flex gap-2 max-w-xs">
-            <button onclick="selectHeroSize('S')" class="hero-size-btn flex-1 py-2 rounded-lg border border-slate-300 font-bold text-xs hover:border-black transition-all">S</button>
-            <button onclick="selectHeroSize('M')" class="hero-size-btn active flex-1 py-2 rounded-lg border border-black bg-black text-white font-bold text-xs transition-all">M</button>
-            <button onclick="selectHeroSize('L')" class="hero-size-btn flex-1 py-2 rounded-lg border border-slate-300 font-bold text-xs hover:border-black transition-all">L</button>
-            <button onclick="selectHeroSize('XL')" class="hero-size-btn flex-1 py-2 rounded-lg border border-slate-300 font-bold text-xs hover:border-black transition-all">XL</button>
-            <button onclick="selectHeroSize('XXL')" class="hero-size-btn flex-1 py-2 rounded-lg border border-slate-300 font-bold text-xs hover:border-black transition-all">2XL</button>
+          <div id="hero-size-selector" class="flex gap-2 max-w-xs">
+            <button data-size="S" class="hero-size-btn flex-1 py-2 rounded-lg border border-slate-300 font-bold text-xs hover:border-black transition-all">S</button>
+            <button data-size="M" class="hero-size-btn active flex-1 py-2 rounded-lg border border-black bg-black text-white font-bold text-xs transition-all">M</button>
+            <button data-size="L" class="hero-size-btn flex-1 py-2 rounded-lg border border-slate-300 font-bold text-xs hover:border-black transition-all">L</button>
+            <button data-size="XL" class="hero-size-btn flex-1 py-2 rounded-lg border border-slate-300 font-bold text-xs hover:border-black transition-all">XL</button>
+            <button data-size="XXL" class="hero-size-btn flex-1 py-2 rounded-lg border border-slate-300 font-bold text-xs hover:border-black transition-all">2XL</button>
           </div>
         </div>
 
@@ -108,12 +109,12 @@
             <span class="block text-[10px] text-emerald-600 font-bold uppercase tracking-wider">In Stock • Ready to Ship</span>
           </div>
 
-          <button onclick="addHeroProductToCart()" class="hero-cta-button bg-black hover:bg-slate-800 text-white font-extrabold text-xs uppercase tracking-widest py-4 px-8 rounded-2xl transition-all shadow-xl hover:shadow-2xl hover:-translate-y-0.5 active:translate-y-0 flex items-center gap-3">
+          <button id="hero-add-cart-btn" class="hero-cta-button bg-black hover:bg-slate-800 text-white font-extrabold text-xs uppercase tracking-widest py-4 px-8 rounded-2xl transition-all shadow-xl hover:shadow-2xl hover:-translate-y-0.5 active:translate-y-0 flex items-center gap-3">
             <i class="fa-solid fa-bag-shopping"></i>
             <span>Shop Collection</span>
           </button>
 
-          <button onclick="openQuickView(1)" class="py-4 px-6 rounded-2xl border border-slate-300 hover:border-black font-extrabold text-xs uppercase tracking-widest transition-all bg-white/60">
+          <button id="hero-quickview-btn" class="py-4 px-6 rounded-2xl border border-slate-300 hover:border-black font-extrabold text-xs uppercase tracking-widest transition-all bg-white/60">
             Quick View
           </button>
         </div>
@@ -231,19 +232,19 @@
         <div>
           <h4 class="text-white font-extrabold uppercase tracking-widest mb-4">CATEGORIES</h4>
           <ul class="space-y-2 text-slate-400 font-bold">
-            <li><a href="#" onclick="filterCategory('all')" class="hover:text-white transition-colors">SHOP ALL</a></li>
-            <li><a href="#" onclick="filterCategory('bestsellers')" class="hover:text-white transition-colors">BEST SELLERS</a></li>
-            <li><a href="#" onclick="filterCategory('clearance')" class="hover:text-white transition-colors">CLEARANCE ($19.99)</a></li>
+            <li><a href="#" data-filter="all" class="hover:text-white transition-colors">SHOP ALL</a></li>
+            <li><a href="#" data-filter="bestsellers" class="hover:text-white transition-colors">BEST SELLERS</a></li>
+            <li><a href="#" data-filter="clearance" class="hover:text-white transition-colors">CLEARANCE ($19.99)</a></li>
           </ul>
         </div>
 
         <div>
           <h4 class="text-white font-extrabold uppercase tracking-widest mb-4">SHIPPING & POLICIES</h4>
           <ul class="space-y-2 text-slate-400 font-bold">
-            <li><a href="#" onclick="showNotification('Standard worldwide shipping: 3-5 business days.')" class="hover:text-white transition-colors">SHIPPING RATES</a></li>
-            <li><a href="#" onclick="showNotification('30-day hassle-free exchange window.')" class="hover:text-white transition-colors">RETURNS & EXCHANGES</a></li>
-            <li><a href="#" onclick="showNotification('True to size modern boxy fit.')" class="hover:text-white transition-colors">SIZE GUIDE</a></li>
-            <li><a href="#" onclick="showNotification('Contact us: support@notjustahoodie.com')" class="hover:text-white transition-colors">CONTACT SUPPORT</a></li>
+            <li><a href="#" data-toast="Standard worldwide shipping: 3-5 business days." class="hover:text-white transition-colors">SHIPPING RATES</a></li>
+            <li><a href="#" data-toast="30-day hassle-free exchange window." class="hover:text-white transition-colors">RETURNS & EXCHANGES</a></li>
+            <li><a href="#" data-toast="True to size modern boxy fit." class="hover:text-white transition-colors">SIZE GUIDE</a></li>
+            <li><a href="#" data-toast="Contact us: support@notjustahoodie.com" class="hover:text-white transition-colors">CONTACT SUPPORT</a></li>
           </ul>
         </div>
 
@@ -279,7 +280,7 @@
           <span class="text-amber-400 font-bold">✝</span>
           <h3 class="text-base font-black uppercase tracking-widest">YOUR CART</h3>
         </div>
-        <button onclick="toggleCart()" class="w-8 h-8 rounded-full hover:bg-white/10 flex items-center justify-center text-slate-300 transition-colors">
+        <button id="close-cart-btn" class="w-8 h-8 rounded-full hover:bg-white/10 flex items-center justify-center text-slate-300 transition-colors">
           <i class="fa-solid fa-xmark text-lg"></i>
         </button>
       </div>
@@ -306,7 +307,7 @@
           </div>
         </div>
 
-        <button onclick="checkout()" class="w-full bg-black hover:bg-slate-800 text-white font-extrabold text-xs uppercase tracking-widest py-4 rounded-2xl shadow-xl transition-all flex items-center justify-center gap-3">
+        <button id="checkout-btn" class="w-full bg-black hover:bg-slate-800 text-white font-extrabold text-xs uppercase tracking-widest py-4 rounded-2xl shadow-xl transition-all flex items-center justify-center gap-3">
           <span>PROCEED TO DIRECT CHECKOUT</span>
           <i class="fa-solid fa-arrow-right text-xs"></i>
         </button>
@@ -318,7 +319,7 @@
   <!-- Quick View Modal -->
   <div id="quickview-modal" class="fixed inset-0 bg-black/80 backdrop-blur-md z-50 hidden flex items-center justify-center p-4">
     <div class="bg-white rounded-3xl max-w-2xl w-full p-6 sm:p-8 relative shadow-2xl border border-white/20">
-      <button onclick="closeQuickView()" class="absolute top-4 right-4 w-8 h-8 bg-slate-100 hover:bg-black hover:text-white rounded-full flex items-center justify-center text-slate-600 transition-colors">
+      <button id="close-quickview-btn" class="absolute top-4 right-4 w-8 h-8 bg-slate-100 hover:bg-black hover:text-white rounded-full flex items-center justify-center text-slate-600 transition-colors">
         <i class="fa-solid fa-xmark"></i>
       </button>
 
@@ -334,415 +335,7 @@
     <span id="toast-message">Added to cart!</span>
   </div>
 
-  <script>
-    // 10 Requested Hoodie Products (Priced strictly between $20 and $25)
-    const products = [
-      {
-        id: 1,
-        title: "Classic Black 'Cross' Hoodie",
-        price: 21.99,
-        originalPrice: 45.00,
-        rating: 4.9,
-        reviews: 214,
-        category: "bestsellers",
-        badge: "BESTSELLER",
-        image: "https://images.unsplash.com/photo-1556905055-8f358a7a47b2?auto=format&fit=crop&w=600&q=80",
-        description: "Classic black heavyweight fleece with white embroidered chest cross emblem. Premium pre-shrunk cotton blend."
-      },
-      {
-        id: 2,
-        title: "Heavyweight Sand Hoodie",
-        price: 24.99,
-        originalPrice: 48.00,
-        rating: 4.8,
-        reviews: 142,
-        category: "bestsellers",
-        badge: "POPULAR",
-        image: "https://images.unsplash.com/photo-1509967419530-da38b4704bc6?auto=format&fit=crop&w=600&q=80",
-        description: "Warm sand colorway with tone-on-tone cross sleeve embroidery. Ultra-dense 450GSM construction."
-      },
-      {
-        id: 3,
-        title: "Vintage Grey Overhead Hoodie",
-        price: 19.99,
-        originalPrice: 38.00,
-        rating: 4.9,
-        reviews: 98,
-        category: "clearance",
-        badge: "CLEARANCE $19.99",
-        image: "https://images.unsplash.com/photo-1578587018452-892bacefd3f2?auto=format&fit=crop&w=600&q=80",
-        description: "Acid-washed vintage heather grey pullover with double-layer drawstring hood."
-      },
-      {
-        id: 4,
-        title: "Pastel Lavender Fleece",
-        price: 22.99,
-        originalPrice: 42.00,
-        rating: 4.7,
-        reviews: 87,
-        category: "all",
-        badge: "NEW COLOR",
-        image: "https://images.unsplash.com/photo-1556905055-8f358a7a47b2?auto=format&fit=crop&w=600&q=80",
-        description: "Soft pastel lavender garment dyed cotton fleece with subtle chest logo."
-      },
-      {
-        id: 5,
-        title: "Deep Forest Green Pullover",
-        price: 23.99,
-        originalPrice: 44.00,
-        rating: 4.8,
-        reviews: 119,
-        category: "bestsellers",
-        badge: "POPULAR",
-        image: "https://images.unsplash.com/photo-1509967419530-da38b4704bc6?auto=format&fit=crop&w=600&q=80",
-        description: "Rich forest green boxy fleece pullover featuring custom gold cross sleeve crest."
-      },
-      {
-        id: 6,
-        title: "Midnight Navy Oversized",
-        price: 24.99,
-        originalPrice: 46.00,
-        rating: 4.9,
-        reviews: 153,
-        category: "bestsellers",
-        badge: "HEAVYWEIGHT",
-        image: "https://images.unsplash.com/photo-1578587018452-892bacefd3f2?auto=format&fit=crop&w=600&q=80",
-        description: "Oversized midnight navy silhouette with drop-shoulder tailoring and fleece lining."
-      },
-      {
-        id: 7,
-        title: "Minimalist White Embroidered",
-        price: 21.99,
-        originalPrice: 40.00,
-        rating: 4.6,
-        reviews: 64,
-        category: "all",
-        badge: "CLEAN LOOK",
-        image: "https://images.unsplash.com/photo-1556905055-8f358a7a47b2?auto=format&fit=crop&w=600&q=80",
-        description: "Crisp white heavy knit hoodie with black high-density cross stitching."
-      },
-      {
-        id: 8,
-        title: "Charcoal Wash Streetwear Hoodie",
-        price: 22.99,
-        originalPrice: 42.50,
-        rating: 4.8,
-        reviews: 76,
-        category: "all",
-        badge: "STREETWEAR",
-        image: "https://images.unsplash.com/photo-1509967419530-da38b4704bc6?auto=format&fit=crop&w=600&q=80",
-        description: "Washed charcoal stone finish with distressed ribbing and signature chest mark."
-      },
-      {
-        id: 9,
-        title: "Rust Orange Boxy Fit",
-        price: 20.99,
-        originalPrice: 39.00,
-        rating: 4.7,
-        reviews: 104,
-        category: "clearance",
-        badge: "STEAL",
-        image: "https://images.unsplash.com/photo-1578587018452-892bacefd3f2?auto=format&fit=crop&w=600&q=80",
-        description: "Earth tone rust orange hoodie in custom relaxed boxy fit with pouch pocket."
-      },
-      {
-        id: 10,
-        title: "Crimson Cross Edition",
-        price: 24.99,
-        originalPrice: 48.00,
-        rating: 4.9,
-        reviews: 188,
-        category: "bestsellers",
-        badge: "LIMITED DROP",
-        image: "https://images.unsplash.com/photo-1556905055-8f358a7a47b2?auto=format&fit=crop&w=600&q=80",
-        description: "Deep crimson red heavy cotton hoodie with velvet touch cross chest crest."
-      }
-    ];
-
-    let cart = [];
-    let selectedHeroSize = 'M';
-    let selectedCategory = 'all';
-    let selectedItemSizes = {};
-
-    function renderProducts(query = '') {
-      const container = document.getElementById('products-container');
-      container.innerHTML = '';
-
-      const filteredProducts = products.filter(product => {
-        const matchesCategory = selectedCategory === 'all' || product.category === selectedCategory;
-        const matchesSearch = product.title.toLowerCase().includes(query.toLowerCase());
-        return matchesCategory && matchesSearch;
-      });
-
-      document.getElementById('item-count-label').textContent = filteredProducts.length;
-
-      if (filteredProducts.length === 0) {
-        container.innerHTML = `
-          <div class="col-span-full text-center py-12">
-            <p class="text-sm font-bold text-slate-500 uppercase tracking-widest">No hoodies found matching your search.</p>
-          </div>
-        `;
-        return;
-      }
-
-      filteredProducts.forEach(product => {
-        const currentSize = selectedItemSizes[product.id] || 'M';
-
-        const productHTML = `
-          <div class="product-card bg-white rounded-2xl p-4 border border-slate-200 shadow-sm flex flex-col justify-between h-full relative group">
-            
-            <div class="relative mb-3 overflow-hidden rounded-xl bg-slate-900 aspect-[4/5]">
-              <span class="absolute top-3 left-3 z-10 bg-black/90 text-amber-400 border border-amber-400/30 text-[9px] font-black px-2.5 py-1 rounded-md tracking-widest uppercase">
-                ✝ ${product.badge}
-              </span>
-              
-              <button onclick="toggleWishlist(this)" class="absolute top-3 right-3 z-10 w-8 h-8 rounded-full bg-white/80 hover:bg-white text-slate-800 flex items-center justify-center text-xs transition-colors shadow">
-                <i class="fa-regular fa-heart"></i>
-              </button>
-
-              <img src="${product.image}" alt="${product.title}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 opacity-90">
-              
-              <div class="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                <button onclick="openQuickView(${product.id})" class="bg-white text-black font-extrabold text-[10px] uppercase tracking-widest px-4 py-2.5 rounded-xl shadow-lg hover:bg-amber-400 transition-colors">
-                  Quick View
-                </button>
-              </div>
-            </div>
-
-            <div class="space-y-3 flex-1 flex flex-col justify-between">
-              <div>
-                <div class="flex items-center gap-1 text-amber-500 text-[10px] mb-1">
-                  <i class="fa-solid fa-star"></i>
-                  <span class="font-bold text-slate-800">${product.rating}</span>
-                  <span class="text-slate-400">(${product.reviews})</span>
-                </div>
-                <h3 class="font-black text-slate-900 text-xs uppercase tracking-wide leading-snug">${product.title}</h3>
-                <p class="text-[10px] text-slate-500 font-semibold mt-0.5">Heavyweight Cotton Fleece</p>
-              </div>
-
-              <!-- Size Selector -->
-              <div class="space-y-1">
-                <span class="text-[9px] font-extrabold uppercase text-slate-400 tracking-wider">Size:</span>
-                <div class="flex gap-1">
-                  ${['S', 'M', 'L', 'XL', '2XL'].map(sz => `
-                    <button onclick="setItemSize(${product.id}, '${sz}')" class="flex-1 py-1 rounded border text-[10px] font-bold transition-all ${sz === currentSize ? 'border-black bg-black text-white' : 'border-slate-200 text-slate-600 hover:border-black'}">
-                      ${sz}
-                    </button>
-                  `).join('')}
-                </div>
-              </div>
-
-              <!-- Price & CTA -->
-              <div class="pt-3 border-t border-slate-100 flex items-center justify-between">
-                <div>
-                  <span class="text-base font-black text-slate-900">$${product.price.toFixed(2)}</span>
-                  ${product.originalPrice ? `<span class="text-xs text-slate-400 line-through ml-1">$${product.originalPrice.toFixed(2)}</span>` : ''}
-                </div>
-
-                <button onclick="addToCart(${product.id})" class="bg-black hover:bg-amber-400 hover:text-black text-white font-extrabold text-[10px] uppercase tracking-wider py-2 px-3 rounded-xl transition-all shadow flex items-center gap-1.5">
-                  <i class="fa-solid fa-bag-shopping"></i>
-                  <span>ADD TO CART</span>
-                </button>
-              </div>
-            </div>
-
-          </div>
-        `;
-
-        container.innerHTML += productHTML;
-      });
-    }
-
-    function setItemSize(productId, size) {
-      selectedItemSizes[productId] = size;
-      renderProducts(document.getElementById('search-input').value);
-    }
-
-    function selectHeroSize(size) {
-      selectedHeroSize = size;
-      const sizeLabels = { 'S': 'S (Small)', 'M': 'M (Medium)', 'L': 'L (Large)', 'XL': 'XL (Extra Large)', 'XXL': '2XL (Double Large)' };
-      document.getElementById('selected-hero-size-label').textContent = sizeLabels[size];
-      
-      document.querySelectorAll('.hero-size-btn').forEach(btn => {
-        if (btn.textContent.trim() === size) {
-          btn.className = 'hero-size-btn active flex-1 py-2 rounded-lg border border-black bg-black text-white font-bold text-xs transition-all';
-        } else {
-          btn.className = 'hero-size-btn flex-1 py-2 rounded-lg border border-slate-300 font-bold text-xs hover:border-black transition-all';
-        }
-      });
-    }
-
-    function addHeroProductToCart() {
-      addToCart(1, selectedHeroSize);
-    }
-
-    function addToCart(productId, explicitSize = null) {
-      const product = products.find(p => p.id === productId);
-      const size = explicitSize || selectedItemSizes[productId] || 'M';
-      const cartItemKey = `${productId}-${size}`;
-      const existingItem = cart.find(item => item.cartKey === cartItemKey);
-
-      if (existingItem) {
-        existingItem.quantity += 1;
-      } else {
-        cart.push({ ...product, size, cartKey: cartItemKey, quantity: 1 });
-      }
-
-      updateCartUI();
-      showNotification(`Added "${product.title}" (${size}) to cart!`);
-    }
-
-    function updateQuantity(cartKey, delta) {
-      const item = cart.find(i => i.cartKey === cartKey);
-      if (item) {
-        item.quantity += delta;
-        if (item.quantity <= 0) {
-          cart = cart.filter(i => i.cartKey !== cartKey);
-        }
-      }
-      updateCartUI();
-    }
-
-    function updateCartUI() {
-      const cartCountEl = document.getElementById('cart-count');
-      const cartItemsList = document.getElementById('cart-items-list');
-      const subtotalEl = document.getElementById('cart-subtotal');
-      const totalEl = document.getElementById('cart-total');
-
-      const totalCount = cart.reduce((sum, item) => sum + item.quantity, 0);
-      const totalSubtotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-
-      cartCountEl.textContent = totalCount;
-      subtotalEl.textContent = `$${totalSubtotal.toFixed(2)}`;
-      totalEl.textContent = `$${totalSubtotal.toFixed(2)}`;
-
-      if (cart.length === 0) {
-        cartItemsList.innerHTML = `
-          <div class="text-center py-16 space-y-4">
-            <div class="w-16 h-16 rounded-full bg-slate-100 flex items-center justify-center text-slate-400 text-2xl mx-auto">
-              <i class="fa-solid fa-bag-shopping"></i>
-            </div>
-            <p class="text-xs font-bold text-slate-500 uppercase tracking-widest">YOUR CART IS EMPTY</p>
-          </div>
-        `;
-        return;
-      }
-
-      cartItemsList.innerHTML = cart.map(item => `
-        <div class="flex items-center justify-between gap-4 p-3 bg-slate-50 rounded-2xl border border-slate-200">
-          <img src="${item.image}" alt="${item.title}" class="w-16 h-20 rounded-xl object-cover bg-black">
-          <div class="flex-1 min-w-0">
-            <div class="flex items-center gap-1">
-              <span class="text-[10px] font-black text-amber-500">✝</span>
-              <h4 class="font-black text-xs text-slate-900 truncate uppercase tracking-wider">${item.title}</h4>
-            </div>
-            <p class="text-[10px] font-bold text-slate-500 uppercase mt-0.5">SIZE: <span class="text-black">${item.size}</span></p>
-            <p class="text-xs text-black font-black mt-1">$${(item.price * item.quantity).toFixed(2)}</p>
-            
-            <div class="flex items-center gap-2 mt-2">
-              <button onclick="updateQuantity('${item.cartKey}', -1)" class="w-6 h-6 rounded bg-white border border-slate-300 text-slate-800 flex items-center justify-center text-xs font-bold hover:bg-black hover:text-white transition-colors">-</button>
-              <span class="text-xs font-extrabold text-slate-900">${item.quantity}</span>
-              <button onclick="updateQuantity('${item.cartKey}', 1)" class="w-6 h-6 rounded bg-white border border-slate-300 text-slate-800 flex items-center justify-center text-xs font-bold hover:bg-black hover:text-white transition-colors">+</button>
-            </div>
-          </div>
-          <button onclick="updateQuantity('${item.cartKey}', -${item.quantity})" class="text-slate-400 hover:text-red-600 text-xs p-2">
-            <i class="fa-solid fa-trash-can"></i>
-          </button>
-        </div>
-      `).join('');
-    }
-
-    function toggleCart() {
-      document.getElementById('cart-drawer').classList.toggle('hidden');
-    }
-
-    function filterCategory(category) {
-      selectedCategory = category;
-      renderProducts();
-    }
-
-    function handleSearch() {
-      const query = document.getElementById('search-input').value;
-      renderProducts(query);
-    }
-
-    function toggleWishlist(btn) {
-      const icon = btn.querySelector('i');
-      if (icon.classList.contains('fa-regular')) {
-        icon.classList.remove('fa-regular');
-        icon.classList.add('fa-solid', 'text-red-500');
-        showNotification('Saved to wishlist!');
-      } else {
-        icon.classList.remove('fa-solid', 'text-red-500');
-        icon.classList.add('fa-regular');
-      }
-    }
-
-    function openQuickView(id) {
-      const product = products.find(p => p.id === id);
-      const modal = document.getElementById('quickview-modal');
-      const content = document.getElementById('quickview-content');
-
-      content.innerHTML = `
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 items-center">
-          <div class="rounded-2xl overflow-hidden bg-black aspect-[4/5]">
-            <img src="${product.image}" class="w-full h-full object-cover">
-          </div>
-          <div class="space-y-4">
-            <span class="text-xs font-black text-amber-500 uppercase tracking-widest">✝ ${product.badge}</span>
-            <h3 class="text-xl font-black text-slate-900 uppercase tracking-wide leading-tight">${product.title}</h3>
-            <p class="text-xs text-slate-600 font-medium">${product.description}</p>
-            <div class="text-2xl font-black text-black">$${product.price.toFixed(2)}</div>
-            
-            <button onclick="addToCart(${product.id}); closeQuickView();" class="w-full bg-black text-white font-extrabold text-xs uppercase tracking-widest py-3.5 rounded-xl hover:bg-slate-800 transition-colors">
-              ADD TO CART
-            </button>
-          </div>
-        </div>
-      `;
-
-      modal.classList.remove('hidden');
-    }
-
-    function closeQuickView() {
-      document.getElementById('quickview-modal').classList.add('hidden');
-    }
-
-    function showNotification(msg) {
-      const toast = document.getElementById('toast');
-      const toastMsg = document.getElementById('toast-message');
-
-      toastMsg.textContent = msg;
-      toast.classList.remove('translate-y-24', 'opacity-0');
-
-      setTimeout(() => {
-        toast.classList.add('translate-y-24', 'opacity-0');
-      }, 3000);
-    }
-
-    function scrollToTop() {
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    }
-
-    function scrollToAbout() {
-      document.getElementById('about-section').scrollIntoView({ behavior: 'smooth' });
-    }
-
-    function checkout() {
-      if (cart.length === 0) {
-        showNotification("Your cart is empty!");
-        return;
-      }
-      showNotification("Direct order placed! No subscription or recurring fees.");
-      cart = [];
-      updateCartUI();
-      toggleCart();
-    }
-
-    window.onload = function() {
-      renderProducts();
-      updateCartUI();
-    };
-  </script>
+  <!-- JavaScript -->
+  <script src="script.js"></script>
 </body>
 </html>
