@@ -2,13 +2,13 @@ const products = [
   {
     id: 1,
     title: "Classic Black 'Cross' Hoodie",
-    price: 21.99,
-    originalPrice: 45.00,
+    price: 34.99,
+    originalPrice: 44.99,
     rating: 4.9,
     reviews: 214,
     category: "bestsellers",
     badge: "BESTSELLER",
-    image: "https://images.unsplash.com/photo-1556905055-8f358a7a47b2?auto=format&fit=crop&w=600&q=80",
+    image: <"https://images.unsplash.com/photo-1556905055-8f358a7a47b2?auto=format&fit=crop&w=600&q=80",>
     description: "Classic black heavyweight fleece with white embroidered chest cross emblem. Premium pre-shrunk cotton blend."
   },
   {
